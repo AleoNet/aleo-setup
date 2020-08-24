@@ -39,4 +39,4 @@ snarkos-curves = { git = "ssh://git@github.com/AleoHQ/snarkOS.git", package = "s
 zexe_r1cs_std = { git = "https://github.com/scipr-lab/zexe", package = "r1cs-std", version = "0.1.0" }
 
 rusty-hook = { version = "0.11.2" }
-tracing-subscriber = { version = "0.2.3" }
+tracing-subscriber = { version = "0.2.11" }

@@ -24,7 +24,7 @@ itertools = { version = "0.8.0" }
 rand = { version = "0.7" }
 rayon = { version = "1.3.0" }
 tracing = { version = "0.1.17" }
-tracing-subscriber = { version = "0.2.3" }
+tracing-subscriber = { version = "0.2.11" }
 
 [dev-dependencies]
 test-helpers = { path = "../test-helpers" }

@@ -32,4 +32,4 @@ rand = { version = "0.7.3" }
 rand_xorshift = { version = "0.2.0" }
 rusty-hook = { version = "0.11.2" }
 thiserror = { version = "1.0.11" }
-tracing-subscriber = { version = "0.2.3" }
+tracing-subscriber = { version = "0.2.11" }
