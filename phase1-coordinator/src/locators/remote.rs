@@ -89,7 +89,9 @@ impl Locator for Remote {
         // Fetch the chunk directory path.
         let path = Self::chunk_directory(environment, round_height, chunk_id);
 
-        match verified {
+        // As the contribution at ID 0 is a continuation of the last contribution
+        // in the previous round, it will always be verified by default.
+        match verified || contribution_id == 0 {
             // Set the contribution locator as `{chunk_directory}/contribution/{contribution_id}.verified`.
             true => format!("{}/contribution/{}.verified", path, contribution_id),
             // Set the contribution locator as `{chunk_directory}/contribution/{contribution_id}.unverified`.
