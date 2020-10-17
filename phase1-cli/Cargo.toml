@@ -19,7 +19,7 @@ hex = { version = "0.4.2" }
 memmap = { version = "0.7.0" }
 rand = { version = "0.7" }
 tracing = { version = "0.1.21" }
-tracing-subscriber = { version = "0.2.3" }
+tracing-subscriber = { version = "0.2.13" }
 
 [dev-dependencies]
 rand_xorshift = { version = "0.2" }
