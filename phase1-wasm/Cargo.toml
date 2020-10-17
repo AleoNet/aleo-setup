@@ -18,7 +18,7 @@ setup-utils = { path = "../setup-utils", default-features = false }
 zexe_algebra = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", package = "algebra", version = "0.1.0", features = ["bls12_377", "bw6_761", "derive"] }
 
 rand = { version = "0.7" }
-serde = { version = "1.0.114" }
+serde = { version = "1.0.117" }
 serde_derive = { version = "1.0.114" }
 tracing = { version = "0.1.21" }
 tracing-subscriber = { version = "0.2.3" }
