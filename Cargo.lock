@@ -1779,15 +1779,15 @@ dependencies = [
 [[package]]
 name = "snarkos-profiler"
 version = "1.1.4"
-source = "git+https://github.com/AleoHQ/snarkOS#e36edb20550ee8a6d2503bbaebb5de7755988b3f"
-dependencies = [
- "colored",
-]
+source = "git+https://github.com/AleoHQ/snarkOS?rev=801bf76#801bf76e04e41ed2b41774bc8928f882aa322d15"
 
 [[package]]
 name = "snarkos-profiler"
 version = "1.1.4"
-source = "git+https://github.com/AleoHQ/snarkOS?rev=801bf76#801bf76e04e41ed2b41774bc8928f882aa322d15"
+source = "git+https://github.com/AleoHQ/snarkOS#e36edb20550ee8a6d2503bbaebb5de7755988b3f"
+dependencies = [
+ "colored",
+]
 
 [[package]]
 name = "snarkos-utilities"
@@ -2166,9 +2166,9 @@ dependencies = [
 
 [[package]]
 name = "web-sys"
-version = "0.3.44"
+version = "0.3.45"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dda38f4e5ca63eda02c059d243aa25b5f35ab98451e518c51612cd0f1bd19a47"
+checksum = "4bf6ef87ad7ae8008e15a355ce696bed26012b7caa21605188cfd8214ab51e2d"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
