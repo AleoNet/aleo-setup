@@ -27,7 +27,7 @@ rand = { version = "0.7.3" }
 rand_chacha = { version = "0.2.1" }
 rayon = { version = "1.4.1", optional = true }
 rust-crypto = { version = "0.2", optional = true }
-thiserror = { version = "1.0.11" }
+thiserror = { version = "1.0.21" }
 tracing = { version = "0.1.21" }
 typenum = { version = "1.11.2" }
 
