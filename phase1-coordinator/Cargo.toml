@@ -31,7 +31,7 @@ once_cell = { version = "1.5.2" }
 rand = { version = "0.7.3" }
 rayon = { version = "1.4.1" }
 serde = { version = "1.0", features = ["derive"] }
-serde-aux = { version = "0.6" }
+serde-aux = { version = "2.1" }
 serde-diff = { version = "0.3" }
 serde_json = { version = "1.0" }
 serial_test = { version = "0.5", optional = true }
