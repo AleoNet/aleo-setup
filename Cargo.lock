@@ -2677,7 +2677,7 @@ checksum = "6a6b1679d49b24bbfe0c803429aa1874472f50d9b363131f0e89fc356b544d03"
 dependencies = [
  "getrandom",
  "libc",
- "rand_chacha",
+ "rand_chacha 0.2.2",
  "rand_core 0.5.1",
  "rand_hc",
 ]
@@ -2690,6 +2690,16 @@ checksum = "f4c8ed856279c9737206bf725bf36935d8666ead7aa69b52be55af369d193402"
 dependencies = [
  "ppv-lite86",
  "rand_core 0.5.1",
+]
+
+[[package]]
+name = "rand_chacha"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e12735cf05c9e10bf21534da50a147b924d555dc7a547c42e6bb2d5b6017ae0d"
+dependencies = [
+ "ppv-lite86",
+ "rand_core 0.6.1",
 ]
 
 [[package]]
@@ -2715,6 +2725,12 @@ checksum = "90bde5296fc891b0cef12a6d03ddccc162ce7b2aff54160af9338f8d40df6d19"
 dependencies = [
  "getrandom",
 ]
+
+[[package]]
+name = "rand_core"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c026d7df8b298d90ccbbc5190bd04d85e159eaf5576caeacf8741da93ccbd2e5"
 
 [[package]]
 name = "rand_hc"
@@ -3314,7 +3330,7 @@ dependencies = [
  "phase1",
  "r1cs-core",
  "rand 0.7.3",
- "rand_chacha",
+ "rand_chacha 0.3.0",
  "rayon",
  "rust-crypto",
  "rusty-hook",
@@ -3489,7 +3505,7 @@ dependencies = [
  "digest 0.8.1",
  "itertools",
  "rand 0.7.3",
- "rand_chacha",
+ "rand_chacha 0.2.2",
  "rayon",
  "sha2",
  "smallvec",
@@ -3509,7 +3525,7 @@ dependencies = [
  "digest 0.8.1",
  "itertools",
  "rand 0.7.3",
- "rand_chacha",
+ "rand_chacha 0.2.2",
  "rayon",
  "sha2",
  "smallvec",
@@ -3679,7 +3695,7 @@ dependencies = [
  "blake2",
  "derivative",
  "digest 0.8.1",
- "rand_chacha",
+ "rand_chacha 0.2.2",
  "rand_core 0.5.1",
  "rayon",
  "snarkos-algorithms 1.1.4 (git+https://github.com/AleoHQ/snarkOS?rev=801bf76)",
