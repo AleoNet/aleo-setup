@@ -370,6 +370,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "blake2"
+version = "0.9.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "10a5720225ef5daecf08657f23791354e1685a8c91a4c60c7f3d3b2892f978f4"
+dependencies = [
+ "crypto-mac 0.8.0",
+ "digest 0.9.0",
+ "opaque-debug 0.3.0",
+]
+
+[[package]]
 name = "blake2s_simd"
 version = "0.5.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -820,6 +831,16 @@ checksum = "4434400df11d95d556bac068ddfedd482915eb18fe8bea89bc80b6e4b1c179e5"
 dependencies = [
  "generic-array 0.12.3",
  "subtle 1.0.0",
+]
+
+[[package]]
+name = "crypto-mac"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b584a330336237c1eecd3e94266efb216c56ed91225d634cb2991c5f3fd1aeab"
+dependencies = [
+ "generic-array 0.14.4",
+ "subtle 2.4.0",
 ]
 
 [[package]]
@@ -2308,7 +2329,7 @@ dependencies = [
  "algebra",
  "algebra-core",
  "anyhow",
- "blake2",
+ "blake2 0.9.1",
  "cfg-if 0.1.10",
  "criterion",
  "derivative",
@@ -3304,7 +3325,7 @@ name = "setup-utils"
 version = "0.3.0"
 dependencies = [
  "algebra",
- "blake2",
+ "blake2 0.9.1",
  "blake2s_simd",
  "cfg-if 0.1.10",
  "criterion",
@@ -3484,7 +3505,7 @@ name = "snarkos-algorithms"
 version = "1.1.4"
 source = "git+https://github.com/AleoHQ/snarkOS?rev=6357695#6357695cffa754608f8147c9d7d8a8d8fbc38d4d"
 dependencies = [
- "blake2",
+ "blake2 0.8.1",
  "derivative",
  "digest 0.8.1",
  "itertools",
@@ -3504,7 +3525,7 @@ name = "snarkos-algorithms"
 version = "1.1.4"
 source = "git+https://github.com/AleoHQ/snarkOS?rev=801bf76#801bf76e04e41ed2b41774bc8928f882aa322d15"
 dependencies = [
- "blake2",
+ "blake2 0.8.1",
  "derivative",
  "digest 0.8.1",
  "itertools",
@@ -3574,7 +3595,7 @@ name = "snarkos-dpc"
 version = "1.1.4"
 source = "git+https://github.com/AleoHQ/snarkOS?rev=6357695#6357695cffa754608f8147c9d7d8a8d8fbc38d4d"
 dependencies = [
- "blake2",
+ "blake2 0.8.1",
  "derivative",
  "hex",
  "itertools",
@@ -3595,7 +3616,7 @@ name = "snarkos-dpc"
 version = "1.1.4"
 source = "git+https://github.com/AleoHQ/snarkOS?rev=801bf76#801bf76e04e41ed2b41774bc8928f882aa322d15"
 dependencies = [
- "blake2",
+ "blake2 0.8.1",
  "derivative",
  "hex",
  "itertools",
@@ -3676,7 +3697,7 @@ name = "snarkos-marlin"
 version = "1.1.4"
 source = "git+https://github.com/AleoHQ/snarkOS?rev=801bf76#801bf76e04e41ed2b41774bc8928f882aa322d15"
 dependencies = [
- "blake2",
+ "blake2 0.8.1",
  "derivative",
  "digest 0.8.1",
  "rand_chacha",
@@ -3810,7 +3831,7 @@ name = "snarkos-posw"
 version = "1.1.4"
 source = "git+https://github.com/AleoHQ/snarkOS?rev=801bf76#801bf76e04e41ed2b41774bc8928f882aa322d15"
 dependencies = [
- "blake2",
+ "blake2 0.8.1",
  "rand 0.7.3",
  "snarkos-algorithms 1.1.4 (git+https://github.com/AleoHQ/snarkOS?rev=801bf76)",
  "snarkos-curves 1.1.4 (git+https://github.com/AleoHQ/snarkOS?rev=801bf76)",

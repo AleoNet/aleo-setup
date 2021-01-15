@@ -47,7 +47,7 @@ snarkos-utilities = { git = "https://github.com/AleoHQ/snarkOS", rev = "801bf76"
 zexe_algebra = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", package = "algebra", version = "0.1.0", features = ["full", "derive"] }
 
 anyhow = { version = "1.0.37" }
-blake2 = { version = "0.8", default-features = false }
+blake2 = { version = "0.9", default-features = false }
 num-traits = { version = "0.2.12" }
 rusty-hook = { version = "0.11.2" }
 
