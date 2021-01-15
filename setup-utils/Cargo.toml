@@ -20,7 +20,7 @@ zexe_r1cs_core = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", p
 
 blake2 = { version = "0.8.1" }
 blake2s_simd = { version = "0.5.11" }
-cfg-if = { version = "0.1.10" }
+cfg-if = { version = "1.0.0" }
 crossbeam = { version = "0.8.0" }
 num_cpus = { version = "1.12.0" }
 rand = { version = "0.7.3" }

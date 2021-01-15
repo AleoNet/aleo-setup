@@ -20,7 +20,7 @@ zexe_algebra = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", pac
 zexe_algebra_core = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", package = "algebra-core", version = "0.1.0", optional = true, features = ["derive"] }
 zexe_fft = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", package = "ff-fft", default-features = false }
 
-cfg-if = { version = "0.1.10" }
+cfg-if = { version = "1.0.0" }
 criterion = { version = "0.3", optional = true }
 itertools = { version = "0.9.0" }
 rand = { version = "0.7" }
