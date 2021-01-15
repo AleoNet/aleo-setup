@@ -21,7 +21,7 @@ rand = { version = "0.7" }
 serde = { version = "1.0.114" }
 serde_derive = { version = "1.0.114" }
 tracing = { version = "0.1.21" }
-tracing-subscriber = { version = "0.2.3" }
+tracing-subscriber = { version = "0.2.15" }
 wasm-bindgen = { version = "0.2.69", features=["serde-serialize"] }
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
