@@ -28,7 +28,7 @@ lazy_static = { version = "1.4.0" }
 memmap = { version = "0.7.0" }
 once_cell = { version = "1.5.2" }
 rand = { version = "0.7.3" }
-rayon = { version = "1.4.1" }
+rayon = { version = "1.5.0" }
 serde = { version = "1.0", features = ["derive"] }
 serde-aux = { version = "0.6" }
 serde-diff = { version = "0.3" }
