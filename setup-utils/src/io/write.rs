@@ -1,8 +1,8 @@
 //! Utilities for writing and reading group elements to buffers in parallel
 use crate::{buffer_size, Result, UseCompression};
 
-use zexe_algebra::AffineCurve;
-use zexe_fft::cfg_chunks_mut;
+use snarkos_algorithms::cfg_chunks_mut;
+use snarkos_models::curves::AffineCurve;
 
 #[cfg(feature = "parallel")]
 use rayon::prelude::*;

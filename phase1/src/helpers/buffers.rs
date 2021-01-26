@@ -1,7 +1,7 @@
 use crate::{ContributionMode, Phase1Parameters, ProvingSystem};
 use setup_utils::{BatchDeserializer, BatchSerializer, *};
 
-use zexe_algebra::{AffineCurve, PairingEngine};
+use snarkos_models::curves::{AffineCurve, PairingEngine};
 
 use itertools::{Itertools, MinMaxResult};
 

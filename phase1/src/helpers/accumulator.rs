@@ -4,12 +4,12 @@ use crate::{helpers::buffers::*, Phase1Parameters, ProvingSystem};
 use cfg_if::cfg_if;
 use setup_utils::{BatchDeserializer, BatchSerializer, Deserializer, Serializer, *};
 
-use zexe_algebra::{AffineCurve, PairingEngine};
+use snarkos_models::curves::{AffineCurve, PairingEngine};
 
 #[cfg(not(feature = "wasm"))]
 use crate::ContributionMode;
 #[cfg(not(feature = "wasm"))]
-use zexe_algebra::{FpParameters, PrimeField, Zero};
+use snarkos_models::curves::{FpParameters, PrimeField, Zero};
 
 #[allow(type_alias_bounds)]
 type AccumulatorElements<E: PairingEngine> = (
@@ -34,7 +34,7 @@ cfg_if! {
     if #[cfg(not(feature = "wasm"))] {
         use crate::PublicKey;
 
-        use zexe_fft::cfg_iter;
+        use snarkos_algorithms::cfg_iter;
 
         #[cfg(feature = "parallel")]
         use rayon::prelude::*;
@@ -315,7 +315,7 @@ mod tests {
     use super::*;
     use crate::helpers::testing::random_point_vec;
 
-    use zexe_algebra::bls12_377::Bls12_377;
+    use snarkos_curves::bls12_377::Bls12_377;
 
     use rand::thread_rng;
 

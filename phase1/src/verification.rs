@@ -623,7 +623,7 @@ mod tests {
     use crate::helpers::testing::{generate_input, generate_output};
     use setup_utils::calculate_hash;
 
-    use zexe_algebra::{Bls12_377, BW6_761};
+    use snarkos_curves::{bls12_377::Bls12_377, bw6_761::BW6_761};
 
     fn full_verification_test<E: PairingEngine>(
         total_size_in_log2: usize,

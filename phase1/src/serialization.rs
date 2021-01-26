@@ -56,7 +56,7 @@ mod tests {
     use super::*;
     use crate::helpers::testing::{generate_output, generate_random_accumulator};
 
-    use zexe_algebra::{Bls12_377, BW6_761};
+    use snarkos_curves::{bls12_377::Bls12_377, bw6_761::BW6_761};
 
     fn serialize_curve_test<E: PairingEngine + Sync>(compress: UseCompression, size: usize, batch: usize) {
         for proving_system in &[ProvingSystem::Groth16, ProvingSystem::Marlin] {

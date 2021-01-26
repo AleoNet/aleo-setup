@@ -90,6 +90,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "ahash"
+version = "0.4.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "739f4a8db6605981345c5654f3a85b056ce52f37a39d34da03f25bf2151ea16e"
+
+[[package]]
 name = "aho-corasick"
 version = "0.7.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -160,6 +166,85 @@ name = "arc-swap"
 version = "0.4.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dabe5a181f83789739c194cbe5a897dde195078fac08568d09221fd6137a7ba8"
+
+[[package]]
+name = "ark-ff"
+version = "0.1.0"
+source = "git+https://github.com/arkworks-rs/algebra?rev=1ebaf95#1ebaf957f804399d468cbd312b005e3a162d2122"
+dependencies = [
+ "ark-ff-asm",
+ "ark-ff-macros",
+ "ark-serialize",
+ "ark-std",
+ "derivative",
+ "num-traits",
+ "rand 0.7.3",
+ "rayon",
+ "rustc_version 0.3.0",
+ "zeroize",
+]
+
+[[package]]
+name = "ark-ff-asm"
+version = "0.1.0"
+source = "git+https://github.com/arkworks-rs/algebra?rev=1ebaf95#1ebaf957f804399d468cbd312b005e3a162d2122"
+dependencies = [
+ "quote 1.0.7",
+ "syn 1.0.45",
+]
+
+[[package]]
+name = "ark-ff-macros"
+version = "0.1.0"
+source = "git+https://github.com/arkworks-rs/algebra?rev=1ebaf95#1ebaf957f804399d468cbd312b005e3a162d2122"
+dependencies = [
+ "num-bigint",
+ "num-traits",
+ "quote 1.0.7",
+ "syn 1.0.45",
+]
+
+[[package]]
+name = "ark-poly"
+version = "0.1.0"
+source = "git+https://github.com/arkworks-rs/algebra?rev=1ebaf95#1ebaf957f804399d468cbd312b005e3a162d2122"
+dependencies = [
+ "ark-ff",
+ "ark-serialize",
+ "ark-std",
+ "derivative",
+ "hashbrown",
+ "rand 0.7.3",
+ "rayon",
+]
+
+[[package]]
+name = "ark-serialize"
+version = "0.1.0"
+source = "git+https://github.com/arkworks-rs/algebra?rev=1ebaf95#1ebaf957f804399d468cbd312b005e3a162d2122"
+dependencies = [
+ "ark-serialize-derive",
+ "ark-std",
+]
+
+[[package]]
+name = "ark-serialize-derive"
+version = "0.1.1-alpha.0"
+source = "git+https://github.com/arkworks-rs/algebra?rev=1ebaf95#1ebaf957f804399d468cbd312b005e3a162d2122"
+dependencies = [
+ "proc-macro2 1.0.24",
+ "quote 1.0.7",
+ "syn 1.0.45",
+]
+
+[[package]]
+name = "ark-std"
+version = "0.1.0"
+source = "git+https://github.com/arkworks-rs/utils#b37f1c8f73c94c5648b6dd310d02c3a81c8a37e9"
+dependencies = [
+ "rand 0.7.3",
+ "rayon",
+]
 
 [[package]]
 name = "arrayref"
@@ -1457,6 +1542,9 @@ name = "hashbrown"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d7afe4a420e3fe79967a00898cc1f4db7c8a49a9333a29f8a4bd76a253d5cd04"
+dependencies = [
+ "ahash",
+]
 
 [[package]]
 name = "heck"
@@ -2174,6 +2262,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "num-bigint"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5e9a41747ae4633fce5adffb4d2e81ffc5e89593cb19917f8fb2cc5ff76507bf"
+dependencies = [
+ "autocfg",
+ "num-integer",
+ "num-traits",
+]
+
+[[package]]
 name = "num-integer"
 version = "0.1.43"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2395,14 +2494,11 @@ dependencies = [
 name = "phase1"
 version = "0.3.0"
 dependencies = [
- "algebra",
- "algebra-core",
  "anyhow",
  "blake2",
  "cfg-if 0.1.10",
  "criterion",
  "derivative",
- "ff-fft",
  "itertools",
  "num-traits",
  "phase1",
@@ -3372,22 +3468,25 @@ dependencies = [
 name = "setup-utils"
 version = "0.3.0"
 dependencies = [
- "algebra",
+ "ark-poly",
  "blake2",
  "blake2s_simd",
  "cfg-if 0.1.10",
  "criterion",
  "crossbeam",
- "ff-fft",
  "num_cpus",
  "phase1",
- "r1cs-core",
  "rand 0.7.3",
  "rand_chacha",
  "rayon",
  "rust-crypto",
  "rusty-hook",
  "serde",
+ "snarkos-algorithms 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "snarkos-curves 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "snarkos-errors 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "snarkos-models 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "snarkos-utilities 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "thiserror",
  "tracing",
  "typenum",
@@ -3567,6 +3666,27 @@ dependencies = [
 [[package]]
 name = "snarkos-algorithms"
 version = "1.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb07037b1575665f3a727ef444c513b4727dda85378c5eba26b4c881bc3046e8"
+dependencies = [
+ "blake2",
+ "derivative",
+ "digest 0.8.1",
+ "itertools",
+ "rand 0.7.3",
+ "rand_chacha",
+ "rayon",
+ "sha2",
+ "smallvec",
+ "snarkos-errors 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "snarkos-models 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "snarkos-profiler 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "snarkos-utilities 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "snarkos-algorithms"
+version = "1.1.4"
 source = "git+https://github.com/AleoHQ/snarkOS?rev=6357695#6357695cffa754608f8147c9d7d8a8d8fbc38d4d"
 dependencies = [
  "blake2",
@@ -3607,6 +3727,22 @@ dependencies = [
 [[package]]
 name = "snarkos-curves"
 version = "1.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3aee88d337863483d07cd91e5dbc1c12de1375c1a133c49fe18f771924a80d6e"
+dependencies = [
+ "derivative",
+ "rand 0.7.3",
+ "rand_xorshift",
+ "rustc_version 0.2.3",
+ "serde",
+ "snarkos-errors 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "snarkos-models 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "snarkos-utilities 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "snarkos-curves"
+version = "1.1.4"
 source = "git+https://github.com/AleoHQ/snarkOS?rev=6357695#6357695cffa754608f8147c9d7d8a8d8fbc38d4d"
 dependencies = [
  "derivative",
@@ -3632,6 +3768,17 @@ dependencies = [
  "snarkos-errors 1.1.4 (git+https://github.com/AleoHQ/snarkOS?rev=801bf76)",
  "snarkos-models 1.1.4 (git+https://github.com/AleoHQ/snarkOS?rev=801bf76)",
  "snarkos-utilities 1.1.4 (git+https://github.com/AleoHQ/snarkOS?rev=801bf76)",
+]
+
+[[package]]
+name = "snarkos-derives"
+version = "1.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a8f6ce35f9f73c13e5381c6938747935ca105e22717998489c3e5ddb8c13120d"
+dependencies = [
+ "proc-macro2 1.0.24",
+ "quote 1.0.7",
+ "syn 1.0.45",
 ]
 
 [[package]]
@@ -3694,6 +3841,23 @@ dependencies = [
  "snarkos-parameters 1.1.4 (git+https://github.com/AleoHQ/snarkOS?rev=801bf76)",
  "snarkos-profiler 1.1.4 (git+https://github.com/AleoHQ/snarkOS?rev=801bf76)",
  "snarkos-utilities 1.1.4 (git+https://github.com/AleoHQ/snarkOS?rev=801bf76)",
+]
+
+[[package]]
+name = "snarkos-errors"
+version = "1.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "df927c3b41badf8a8479dd6b23340e4799bec44abb7a479cb253d912e888a1ca"
+dependencies = [
+ "base58",
+ "bech32 0.6.0",
+ "bincode",
+ "curl",
+ "hex",
+ "jsonrpc-core",
+ "rocksdb",
+ "thiserror",
+ "toml",
 ]
 
 [[package]]
@@ -3774,6 +3938,23 @@ dependencies = [
  "snarkos-polycommit",
  "snarkos-profiler 1.1.4 (git+https://github.com/AleoHQ/snarkOS?rev=801bf76)",
  "snarkos-utilities 1.1.4 (git+https://github.com/AleoHQ/snarkOS?rev=801bf76)",
+]
+
+[[package]]
+name = "snarkos-models"
+version = "1.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "38d90d4fd9030e69dcbca1f7eaea3f14c08653f0f06600f42c2022e8cf72f82d"
+dependencies = [
+ "bincode",
+ "derivative",
+ "itertools",
+ "rand 0.7.3",
+ "rand_xorshift",
+ "serde",
+ "smallvec",
+ "snarkos-errors 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "snarkos-utilities 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -3914,6 +4095,12 @@ dependencies = [
 [[package]]
 name = "snarkos-profiler"
 version = "1.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d0519c9371650425e332e3971ecfc691fbd1c67e03be15c20aba89ac8242ea2b"
+
+[[package]]
+name = "snarkos-profiler"
+version = "1.1.4"
 source = "git+https://github.com/AleoHQ/snarkOS?rev=6357695#6357695cffa754608f8147c9d7d8a8d8fbc38d4d"
 
 [[package]]
@@ -3938,6 +4125,18 @@ dependencies = [
  "snarkos-utilities 1.1.4 (git+https://github.com/AleoHQ/snarkOS?rev=6357695)",
  "thiserror",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "snarkos-utilities"
+version = "1.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6f6e1ccf791ace8d28266d3067d0bf93e3a0c1beafa472f186f55866fe8a7d73"
+dependencies = [
+ "bincode",
+ "rand 0.7.3",
+ "snarkos-derives 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
+ "snarkos-errors 1.1.4 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

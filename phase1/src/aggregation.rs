@@ -185,7 +185,7 @@ mod tests {
     use super::*;
     use crate::helpers::testing::{generate_input, generate_output};
 
-    use zexe_algebra::{Bls12_377, BW6_761};
+    use snarkos_curves::{bls12_377::Bls12_377, bw6_761::BW6_761};
 
     fn aggregation_test<E: PairingEngine>(
         powers: usize,

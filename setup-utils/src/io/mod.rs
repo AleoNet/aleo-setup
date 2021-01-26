@@ -6,7 +6,7 @@ mod write;
 pub use write::{BatchSerializer, Serializer};
 
 use crate::UseCompression;
-use zexe_algebra::AffineCurve;
+use snarkos_models::curves::AffineCurve;
 
 pub fn buffer_size<C: AffineCurve>(compression: UseCompression) -> usize {
     if compression == UseCompression::Yes {
@@ -21,7 +21,7 @@ mod tests {
     use super::*;
     use phase1::helpers::testing::random_point_vec;
 
-    use zexe_algebra::bls12_377::{G1Affine, G2Affine};
+    use snarkos_curves::bls12_377::{G1Affine, G2Affine};
 
     use crate::CheckForCorrectness;
     use rand::thread_rng;

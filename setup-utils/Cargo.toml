@@ -14,9 +14,13 @@ name = "math"
 harness = false
 
 [dependencies]
-zexe_algebra = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", package = "algebra", version = "0.1.0" }
-zexe_fft = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", package = "ff-fft", version = "0.1.0", default-features = false }
-zexe_r1cs_core = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", package = "r1cs-core", version = "0.1.0" }
+ark-poly = { git = "https://github.com/arkworks-rs/algebra", rev = "1ebaf95", package = "ark-poly", version = "0.1.0" }
+
+snarkos-algorithms = { version = "1.1.4", default-features = false }
+snarkos-curves = { version = "1.1.4", deafult-features = false }
+snarkos-errors = { version = "1.1.4", default-features = false }
+snarkos-models = { version = "1.1.4", default-features = false }
+snarkos-utilities = { version = "1.1.4", default-features = false }
 
 blake2 = { version = "0.8.1" }
 blake2s_simd = { version = "0.5.11" }
@@ -35,8 +39,6 @@ typenum = { version = "1.11.2" }
 [dev-dependencies]
 phase1 = { path = "../phase1" }
 
-zexe_algebra = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", package = "algebra", version = "0.1.0", features = ["bls12_377", "bw6_761"] }
-
 criterion = { version = "0.3.1" }
 rusty-hook = { version = "0.11.2" }
 
@@ -45,4 +47,4 @@ default = ["parallel"]
 cli = ["parallel", "rust-crypto"]
 wasm = ["rand/wasm-bindgen"]
 
-parallel = ["rayon", "zexe_algebra/parallel", "zexe_fft/parallel"]
+parallel = ["rayon", "ark-poly/parallel"]

@@ -1,15 +1,9 @@
 use phase1::helpers::testing::random_point_vec;
 use setup_utils::{batch_exp, dense_multiexp, generate_powers_of_tau};
 
-use zexe_algebra::{
-    bls12_377::{Bls12_377, G1Affine},
-    AffineCurve,
-    Field,
-    PairingEngine,
-    PrimeField,
-    UniformRand,
-    Zero,
-};
+use snarkos_curves::bls12_377::{Bls12_377, G1Affine};
+use snarkos_models::curves::{AffineCurve, Field, PairingEngine, PrimeField, Zero};
+use snarkos_utilities::UniformRand;
 
 use criterion::{criterion_group, criterion_main, Criterion, Throughput};
 use rand::Rng;

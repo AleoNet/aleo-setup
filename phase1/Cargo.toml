@@ -16,10 +16,6 @@ required-features = ["benchmark"]
 [dependencies]
 setup-utils = { path = "../setup-utils", default-features = false }
 
-zexe_algebra = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", package = "algebra", version = "0.1.0", features = ["derive"] }
-zexe_algebra_core = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", package = "algebra-core", version = "0.1.0", optional = true, features = ["derive"] }
-zexe_fft = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", package = "ff-fft", default-features = false }
-
 cfg-if = { version = "0.1.10" }
 criterion = { version = "0.3", optional = true }
 itertools = { version = "0.9.0" }
@@ -44,8 +40,6 @@ snarkos-polycommit = { git = "https://github.com/AleoHQ/snarkOS", rev = "801bf76
 snarkos-posw = { git = "https://github.com/AleoHQ/snarkOS", rev = "801bf76", package = "snarkos-posw", default-features = false }
 snarkos-utilities = { git = "https://github.com/AleoHQ/snarkOS", rev = "801bf76", package = "snarkos-utilities", default-features = false }
 
-zexe_algebra = { git = "https://github.com/scipr-lab/zexe", rev = "b24eda5", package = "algebra", version = "0.1.0", features = ["full", "derive"] }
-
 anyhow = { version = "1.0.37" }
 blake2 = { version = "0.8", default-features = false }
 num-traits = { version = "0.2.12" }
@@ -54,11 +48,11 @@ rusty-hook = { version = "0.11.2" }
 [features]
 default = ["cli"]
 cli = ["parallel", "setup-utils/cli"]
-parallel = ["rayon", "setup-utils/parallel", "zexe_algebra/parallel", "zexe_algebra_core/parallel", "zexe_fft/parallel"]
+parallel = ["rayon", "setup-utils/parallel"]
 wasm = ["setup-utils/wasm"]
 
 benchmark = ["criterion"]
-testing = ["parallel", "zexe_algebra_core", "snarkos-profiler/print-trace"]
+testing = ["parallel", "snarkos-profiler/print-trace"]
 
 [[test]]
 name = "aleo_compatibility"

@@ -29,4 +29,4 @@ pub use seed::derive_rng_from_seed;
 pub use blake2::digest::generic_array::GenericArray;
 pub use typenum::U64;
 
-pub use zexe_fft::{cfg_chunks, cfg_into_iter, cfg_iter_mut};
+pub use snarkos_algorithms::{cfg_chunks, cfg_into_iter, cfg_iter_mut};
