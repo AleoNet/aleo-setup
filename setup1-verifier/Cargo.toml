@@ -33,7 +33,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0" }
 serde_derive = { version = "1.0" }
 thiserror = { version = "1.0" }
-tokio = { version = "0.2.22", features = ["full"] }
+tokio = { version = "0.3.2", features = ["full"] }
 tracing = { version = "0.1.19" }
 tracing-subscriber = { version = "0.2" }
 
