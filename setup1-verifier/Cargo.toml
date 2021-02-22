@@ -12,6 +12,10 @@ edition = "2018"
 name = "setup1-verifier"
 path = "src/main.rs"
 
+[[bin]]
+name = "view-key"
+path = "src/view_key.rs"
+
 [dependencies]
 phase1 = { path = "../phase1" }
 phase1-cli = { path = "../phase1-cli" }
