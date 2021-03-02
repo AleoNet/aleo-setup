@@ -40,7 +40,7 @@ fn main() {
             Arg::with_name("path")
                 .short("p")
                 .long("path")
-                .help("Path to a file containing the public key")
+                .help("Path to a file containing the private key")
                 .takes_value(true)
                 .required(true),
         )
