@@ -3358,6 +3358,7 @@ dependencies = [
  "tracing",
  "tracing-appender",
  "tracing-subscriber",
+ "unic-langid",
  "url 2.2.0",
 ]
 

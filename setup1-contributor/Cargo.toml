@@ -11,6 +11,10 @@ edition = "2018"
 name = "aleo-setup-contributor"
 path = "src/main.rs"
 
+[[bin]]
+name = "public-key-extractor"
+path = "src/public_key_extractor.rs"
+
 [dependencies]
 phase1 = { path = "../phase1" }
 phase1-cli = { path = "../phase1-cli" }
@@ -45,6 +49,7 @@ tracing = { version = "0.1" }
 tracing-appender = { version = "0.1.1" }
 tracing-subscriber = { version = "0.2" }
 url = { version = "2.1.1" }
+unic-langid = "0.9.0"
 
 [dev-dependencies]
 lazy_static = { version = "1.4.0" }
