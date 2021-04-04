@@ -19,7 +19,6 @@ use std::{
     iter::FromIterator,
     str::FromStr,
 };
-use tracing::*;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub(super) enum CoordinatorStatus {

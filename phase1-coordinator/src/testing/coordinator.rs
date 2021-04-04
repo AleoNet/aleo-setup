@@ -16,7 +16,6 @@ use std::{
     path::Path,
     sync::{Arc, RwLock},
 };
-use tracing::*;
 
 use once_cell::sync::OnceCell;
 

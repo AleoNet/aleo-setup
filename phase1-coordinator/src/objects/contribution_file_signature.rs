@@ -80,12 +80,12 @@ impl ContributionFileSignature {
     #[cfg(any(test, feature = "operator"))]
     #[inline]
     pub fn new(signature: String, state: ContributionState) -> Result<Self, CoordinatorError> {
-        tracing::debug!("Starting to create contribution signature");
+        debug!("Starting to create contribution signature");
         // Check that the signature is 64 bytes.
         if hex::decode(&signature)?.len() != 64 {
             return Err(CoordinatorError::ContributionSignatureSizeMismatch);
         }
-        tracing::debug!("Completed creating contribution signature");
+        debug!("Completed creating contribution signature");
         Ok(Self { signature, state })
     }
 

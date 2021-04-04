@@ -5,7 +5,6 @@ pub use function_name::named;
 pub use serde_diff::{Apply, Diff, SerdeDiff};
 #[cfg(test)]
 pub use serial_test::serial;
-pub use tracing::*;
 
 use std::panic::{catch_unwind, RefUnwindSafe};
 

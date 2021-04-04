@@ -37,9 +37,9 @@ impl Dummy {
     fn warning() {
         #[cfg(not(test))]
         {
-            tracing::trace!("A DUMMY SIGNATURE SCHEME METHOD IS CURRENTLY BEING USED");
-            tracing::warn!("DUMMY SIGNATURE SCHEME IS NOT SAFE FOR USE IN PRODUCTION");
-            tracing::error!("ATTEMPTING TO USE INSECURE SIGNATURE SCHEME IN CEREMONY");
+            trace!("A DUMMY SIGNATURE SCHEME METHOD IS CURRENTLY BEING USED");
+            warn!("DUMMY SIGNATURE SCHEME IS NOT SAFE FOR USE IN PRODUCTION");
+            error!("ATTEMPTING TO USE INSECURE SIGNATURE SCHEME IN CEREMONY");
         }
     }
 }

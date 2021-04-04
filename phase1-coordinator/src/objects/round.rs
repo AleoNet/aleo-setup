@@ -12,7 +12,6 @@ use serde::{Deserialize, Serialize};
 use serde_aux::prelude::*;
 use serde_diff::SerdeDiff;
 use std::{collections::HashSet, hash::Hash};
-use tracing::{debug, error, trace, warn};
 
 /// A helper function used to check that each list of participants is unique.
 fn has_unique_elements<T>(iter: T) -> bool

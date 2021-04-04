@@ -8,7 +8,6 @@ use setup_utils::{blank_hash, calculate_hash, UseCompression};
 use zexe_algebra::PairingEngine as Engine;
 
 use std::{io::Write, time::Instant};
-use tracing::{debug, error, info, trace};
 use zexe_algebra::{Bls12_377, BW6_761};
 
 pub(crate) struct Initialization;
@@ -124,8 +123,6 @@ mod tests {
         testing::prelude::*,
     };
     use setup_utils::{blank_hash, calculate_hash, GenericArray};
-
-    use tracing::{debug, trace};
 
     #[test]
     #[serial]

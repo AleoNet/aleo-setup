@@ -7,7 +7,6 @@ use crate::{
 use phase1::{helpers::CurveKind, Phase1};
 
 use std::time::Instant;
-use tracing::{debug, error, trace};
 use zexe_algebra::{Bls12_377, BW6_761};
 
 pub(crate) struct Aggregation;
@@ -152,7 +151,6 @@ mod tests {
     use chrono::Utc;
     use once_cell::sync::Lazy;
     use rand::RngCore;
-    use tracing::*;
 
     #[test]
     #[serial]

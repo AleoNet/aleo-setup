@@ -1,7 +1,6 @@
 use crate::{objects::Participant, CoordinatorError};
 
 use serde::{Deserialize, Serialize};
-use tracing::trace;
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

@@ -10,7 +10,6 @@ use setup_utils::{calculate_hash, derive_rng_from_seed, UseCompression};
 
 use rand::Rng;
 use std::{io::Write, sync::Arc, time::Instant};
-use tracing::{debug, error, info, trace};
 use zexe_algebra::{Bls12_377, PairingEngine as Engine, BW6_761};
 
 pub const SEED_LENGTH: usize = 32;
@@ -179,7 +178,6 @@ mod tests {
 
     use rand::RngCore;
     use std::sync::Arc;
-    use tracing::{debug, trace};
 
     #[test]
     #[serial]

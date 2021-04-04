@@ -86,7 +86,7 @@ pub(crate) fn write_contribution_file_signature(
 
     // Write the contribution file signature.
     let mut contribution_file_signature_writer = storage.writer(contribution_file_signature_locator)?;
-    tracing::debug!(
+    debug!(
         "Writing contribution file signature of size {} to {}",
         contribution_file_signature_bytes.len(),
         &storage.to_path(&contribution_file_signature_locator)?

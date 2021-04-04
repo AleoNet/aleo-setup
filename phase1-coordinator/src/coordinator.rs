@@ -17,7 +17,6 @@ use std::{
     fmt,
     sync::{Arc, RwLock},
 };
-use tracing::*;
 
 #[derive(Debug)]
 pub enum CoordinatorError {

@@ -18,7 +18,6 @@ use std::{
     str::FromStr,
     sync::{Arc, RwLock},
 };
-use tracing::{debug, error, trace};
 
 #[derive(Debug)]
 pub struct Disk {
