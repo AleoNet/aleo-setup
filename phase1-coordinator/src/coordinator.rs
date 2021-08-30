@@ -1505,7 +1505,9 @@ impl Coordinator {
 
         // Attempt to acquire the chunk lock for participant.
         trace!("Preparing to lock chunk {}", chunk_id);
-        let locked_locators = round.try_lock_chunk(&self.environment, &mut self.storage, chunk_id, &participant)?;
+        let (locked_locators, actions) =
+            round.try_lock_chunk(&self.environment, &self.storage, chunk_id, &participant)?;
+        self.storage.perform_actions(actions)?;
         trace!("Participant {} locked chunk {}", participant, chunk_id);
 
         // Add the updated round to storage.
@@ -2293,12 +2295,11 @@ impl Coordinator {
                 let mut round = Self::load_current_round(&self.storage)?;
 
                 // Remove the contributor from the round self.
-                round.remove_contributor_unsafe(
-                    &mut self.storage,
+                self.storage.perform_actions(round.remove_contributor_unsafe(
                     &replace_action.dropped_contributor,
                     &replace_action.locked_chunks,
                     &replace_action.tasks,
-                )?;
+                )?)?;
 
                 // Assign a replacement contributor to the dropped tasks for the current round.
                 round.add_replacement_contributor_unsafe(replace_action.replacement_contributor.clone())?;
@@ -2324,18 +2325,14 @@ impl Coordinator {
                 warn!("Removing locked chunks and all impacted contributions");
 
                 // Remove the lock from the specified chunks.
-                round.remove_locks_unsafe(
-                    &mut self.storage,
-                    &remove_action.dropped_verifier,
-                    &remove_action.locked_chunks,
+                self.storage.perform_actions(
+                    round.remove_locks_unsafe(&remove_action.dropped_verifier, &remove_action.locked_chunks)?,
                 )?;
                 warn!("Removed locked chunks");
 
                 // Remove the contributions from the specified chunks.
-                round.remove_chunk_contributions_unsafe(
-                    &mut self.storage,
-                    &remove_action.dropped_verifier,
-                    &remove_action.tasks,
+                self.storage.perform_actions(
+                    round.remove_chunk_contributions_unsafe(&remove_action.dropped_verifier, &remove_action.tasks)?,
                 )?;
                 warn!("Removed impacted contributions");
 
@@ -2453,7 +2450,8 @@ impl Coordinator {
         let mut round = Self::load_round(&mut self.storage, current_round_height)?;
 
         tracing::debug!("Resetting round and applying storage changes");
-        self.storage.process(round.reset(&reset_action.remove_participants))?;
+        self.storage
+            .perform_action(round.reset(&reset_action.remove_participants))?;
 
         // Clear all files
         self.storage.clear_round_files(current_round_height)?;

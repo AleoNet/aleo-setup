@@ -287,7 +287,7 @@ impl From<Locator> for LocatorOrPath {
     }
 }
 
-/// An action to remove an item from [Storage].
+/// An action to remove an item from [Disk].
 #[derive(Clone, PartialEq, Debug)]
 pub struct RemoveAction {
     locator_or_path: LocatorOrPath,
@@ -301,13 +301,13 @@ impl RemoveAction {
         }
     }
 
-    /// Obtain the location of the item to be removed from [Storage]
+    /// Obtain the location of the item to be removed from [Disk]
     /// as a [LocatorOrPath].
     pub fn locator_or_path(&self) -> &LocatorOrPath {
         &self.locator_or_path
     }
 
-    /// Obtain the location of the item to be removed from [Storage]
+    /// Obtain the location of the item to be removed from [Disk]
     /// as a [Locator].
     pub fn try_into_locator(self, storage: &Disk) -> Result<Locator, CoordinatorError> {
         self.locator_or_path.try_into_locator(storage)
@@ -318,18 +318,31 @@ impl RemoveAction {
     }
 }
 
-/// An action to update an item in [Storage].
+/// An action to update an item in [Disk].
 pub struct UpdateAction {
     pub locator: Locator,
     pub object: Object,
 }
 
-/// An action taken to mutate [Storage], which can be processed by
+/// An action to initialize an item in [Disk].
+pub struct InitializeAction {
+    pub locator: Locator,
+    pub object_size: u64,
+}
+
+/// An action taken to mutate [Disk], which can be processed by
 /// [Storage::process()].
 #[non_exhaustive]
 pub enum StorageAction {
+    /// Remove an item in storage, will fail if the item does not yet
+    /// exist.
     Remove(RemoveAction),
+    /// Remove an item in storage if it exists.
+    RemoveIfExists(RemoveAction),
+    /// Update an item in storage.
     Update(UpdateAction),
+    /// Initialize an item in storage.
+    Initialize(InitializeAction),
 }
 
 pub trait StorageLocator {
