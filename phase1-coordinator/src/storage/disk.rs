@@ -450,6 +450,15 @@ impl Disk {
             };
         })
     }
+
+    fn sanitize_manifest(&mut self, round_height: u64) -> Result<(), CoordinatorError> {
+        // Acquire the manifest file write lock.
+        let manifest = self.manifest.write().unwrap();
+
+        SerializedDiskManifest::sanitize(self.resolver.manifest(), round_height)?;
+        manifest.sanitize(round_height);
+        Ok(())
+    }
 }
 
 impl StorageLocator for Disk {
@@ -591,6 +600,42 @@ impl StorageObject for Disk {
 struct SerializedDiskManifest {
     open: BTreeSet<LocatorPath>,
     locators: BTreeSet<LocatorPath>,
+}
+
+impl SerializedDiskManifest {
+    fn sanitize(path: String, round_height: u64) -> Result<(), CoordinatorError> {
+        // Read the serialized paths from the manifest.
+        let serialized = fs::read_to_string(&Path::new(&path))?;
+
+        let round_id = format!("round_{}", round_height);
+        let prev_round_id = format!("round_{}", round_height - 1);
+
+        // Check that all locator paths exist on disk.
+        let manifest: SerializedDiskManifest = serde_json::from_str(&serialized)?;
+
+        // Sanitize manifest, by removing all outdated locators.
+        for open in &manifest.open {
+            // If the locator is from 2 rounds or more ago, we should delete
+            // it - it should no longer be opened.
+            if open.as_string().contains("round")
+                && !open.as_string().contains(&round_id)
+                && !open.as_string().contains(&prev_round_id)
+            {
+                manifest.open.remove(open);
+                manifest.locators.remove(open);
+            }
+        }
+
+        for locator in &manifest.locators {
+            if !locator.as_string().contains(&round_id) && !locator.as_string().contains(&prev_round_id) {
+                manifest.locators.remove(locator);
+            }
+        }
+
+        // Update manifest
+        let serialized = serde_json::to_string_pretty(&manifest)?;
+        Ok(fs::write(&Path::new(&path), serialized)?)
+    }
 }
 
 #[derive(Debug)]
@@ -887,6 +932,54 @@ impl DiskManifest {
     #[inline]
     fn contains(&self, locator: &Locator) -> bool {
         self.locators.contains(locator)
+    }
+
+    fn sanitize(&mut self, round_height: u64) {
+        for open in &self.open {
+            if !should_locator_exist(open, round_height) {
+                self.open.remove(open);
+            }
+        }
+
+        for locator in &self.locators {
+            if !should_locator_exist(locator, round_height) {
+                self.locators.remove(locator);
+            }
+        }
+    }
+}
+
+fn should_locator_exist(locator: &Locator, round_height: u64) -> bool {
+    match locator {
+        Locator::RoundState { round_height: height } => {
+            if *height < round_height - 1 {
+                return false;
+            }
+
+            true
+        }
+        Locator::RoundFile { round_height: height } => {
+            if *height < round_height - 1 {
+                return false;
+            }
+
+            true
+        }
+        Locator::ContributionFile(locator) => {
+            if locator.round_height() < round_height - 1 {
+                return false;
+            }
+
+            true
+        }
+        Locator::ContributionFileSignature(locator) => {
+            if locator.round_height() < round_height - 1 {
+                return false;
+            }
+
+            true
+        }
+        _ => true,
     }
 }
 

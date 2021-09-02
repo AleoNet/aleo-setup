@@ -225,6 +225,10 @@ impl LocatorPath {
     pub fn as_path(&self) -> &Path {
         Path::new(&self.0)
     }
+
+    pub fn as_string(&self) -> String {
+        self.0
+    }
 }
 
 impl From<String> for LocatorPath {
