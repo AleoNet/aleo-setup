@@ -453,7 +453,7 @@ impl Disk {
 
     fn sanitize_manifest(&mut self, round_height: u64) -> Result<(), CoordinatorError> {
         // Acquire the manifest file write lock.
-        let manifest = self.manifest.write().unwrap();
+        let mut manifest = self.manifest.write().unwrap();
 
         SerializedDiskManifest::sanitize(self.resolver.manifest(), round_height)?;
         manifest.sanitize(round_height);
@@ -611,10 +611,10 @@ impl SerializedDiskManifest {
         let prev_round_id = format!("round_{}", round_height - 1);
 
         // Check that all locator paths exist on disk.
-        let manifest: SerializedDiskManifest = serde_json::from_str(&serialized)?;
+        let mut manifest: SerializedDiskManifest = serde_json::from_str(&serialized)?;
 
         // Sanitize manifest, by removing all outdated locators.
-        for open in &manifest.open {
+        for open in &manifest.open.clone() {
             // If the locator is from 2 rounds or more ago, we should delete
             // it - it should no longer be opened.
             if open.as_string().contains("round")
@@ -626,7 +626,7 @@ impl SerializedDiskManifest {
             }
         }
 
-        for locator in &manifest.locators {
+        for locator in &manifest.locators.clone() {
             if !locator.as_string().contains(&round_id) && !locator.as_string().contains(&prev_round_id) {
                 manifest.locators.remove(locator);
             }
@@ -935,13 +935,13 @@ impl DiskManifest {
     }
 
     fn sanitize(&mut self, round_height: u64) {
-        for open in &self.open {
+        for open in &self.open.clone() {
             if !should_locator_exist(open, round_height) {
                 self.open.remove(open);
             }
         }
 
-        for locator in &self.locators {
+        for locator in &self.locators.clone() {
             if !should_locator_exist(locator, round_height) {
                 self.locators.remove(locator);
             }
