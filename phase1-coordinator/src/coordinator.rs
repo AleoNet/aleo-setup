@@ -1322,6 +1322,8 @@ impl Coordinator {
                         // If success, update coordinator state to next round.
                         info!("Coordinator has advanced to round {}", next_round_height);
                         self.state.commit_next_round();
+                        self.storage
+                            .process(StorageAction::SanitizeManifest(next_round_height))?;
                         Ok(next_round_height)
                     }
                     // Case 1b - Coordinator failed to advance the round.

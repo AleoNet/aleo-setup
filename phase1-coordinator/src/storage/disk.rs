@@ -413,6 +413,7 @@ impl Disk {
             }
             StorageAction::Update(update_action) => Ok(self.update(&update_action.locator, update_action.object)?),
             StorageAction::ClearRoundFiles(round_height) => self.clear_round_files(round_height),
+            StorageAction::SanitizeManifest(round_height) => self.sanitize_manifest(round_height),
         }
     }
 
@@ -451,7 +452,7 @@ impl Disk {
         })
     }
 
-    fn sanitize_manifest(&mut self, round_height: u64) -> Result<(), CoordinatorError> {
+    fn sanitize_manifest(&mut self, round_height: u64) -> Result<()> {
         // Acquire the manifest file write lock.
         let mut manifest = self.manifest.write().unwrap();
 

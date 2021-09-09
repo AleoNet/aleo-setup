@@ -335,6 +335,7 @@ pub enum StorageAction {
     Remove(RemoveAction),
     Update(UpdateAction),
     ClearRoundFiles(u64),
+    SanitizeManifest(u64),
 }
 
 pub trait StorageLocator {
