@@ -2287,6 +2287,10 @@ fn rollback_locked_chunk() -> anyhow::Result<()> {
     assert_eq!(num_pending, contributor_info.pending_tasks().len());
     assert!(contributor_info.assigned_tasks().contains(&task));
 
+    let current_round = coordinator.current_round()?;
+    let chunk = current_round.chunk(task.chunk_id())?;
+    assert_eq!(&None, chunk.lock_holder());
+
     Ok(())
 }
 
@@ -2339,6 +2343,10 @@ fn undo_completed_chunk() -> anyhow::Result<()> {
     assert_eq!(0, contributor_info.completed_tasks().len());
     assert_eq!(num_assigned + 1, contributor_info.assigned_tasks().len());
     assert!(contributor_info.assigned_tasks().contains(finished_task));
+
+    let current_round = coordinator.current_round()?;
+    let chunk = current_round.chunk(finished_task.chunk_id())?;
+    assert_eq!(1, chunk.get_contributions().len());
 
     Ok(())
 }
