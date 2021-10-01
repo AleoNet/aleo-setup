@@ -2636,14 +2636,14 @@ impl Coordinator {
         self.state.rollback_locked_task(participant, task, &*self.time)?;
         self.save_state()?;
 
-        self.current_round()?
-            .remove_locks_unsafe(&mut self.storage, participant, &[task.chunk_id()])?;
+        let mut round = self.current_round()?;
+        round.remove_locks_unsafe(&mut self.storage, participant, &[task.chunk_id()])?;
 
         Ok(self.storage.process(StorageAction::Update(UpdateAction {
             locator: Locator::RoundState {
                 round_height: self.current_round_height()?,
             },
-            object: Object::RoundState(self.current_round()?),
+            object: Object::RoundState(round),
         }))?)
     }
 
@@ -2655,14 +2655,14 @@ impl Coordinator {
         self.state.undo_completed_task(participant, &task, &*self.time)?;
         self.save_state()?;
 
-        self.current_round()?
-            .remove_chunk_contributions_unsafe(&mut self.storage, participant, &[task])?;
+        let mut round = self.current_round()?;
+        round.remove_chunk_contributions_unsafe(&mut self.storage, participant, &[task])?;
 
         Ok(self.storage.process(StorageAction::Update(UpdateAction {
             locator: Locator::RoundState {
                 round_height: self.current_round_height()?,
             },
-            object: Object::RoundState(self.current_round()?),
+            object: Object::RoundState(round),
         }))?)
     }
 }
