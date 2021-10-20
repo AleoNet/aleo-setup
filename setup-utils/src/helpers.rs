@@ -20,7 +20,7 @@ use std::{
 use typenum::consts::U64;
 
 #[cfg(not(feature = "wasm"))]
-use crypto::{digest::Digest as CryptoDigest, sha2::Sha256};
+use sha2::Sha256;
 
 #[cfg(feature = "parallel")]
 use rayon::prelude::*;
@@ -141,8 +141,9 @@ pub fn beacon_randomness(mut beacon_hash: [u8; 32]) -> [u8; 32] {
         }
 
         let mut h = Sha256::new();
-        h.input(&beacon_hash);
-        h.result(&mut beacon_hash);
+        h.update(&beacon_hash);
+        let bytes = h.finalize();
+        beacon_hash.copy_from_slice(&bytes);
     }
 
     print!("Final result of beacon: ");
