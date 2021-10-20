@@ -21,7 +21,6 @@ snarkvm-curves = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c"
 snarkvm-utilities = { git = "https://github.com/AleoHQ/snarkVM", rev = "fc997c" }
 
 anyhow = { version = "1.0.32" }
-chrono = { version = "0.4", features = ["serde"] }
 ctrlc = { version = "3.1.7" }
 fs-err = { version = "2.6" }
 futures-util = { version = "0.3.5" }

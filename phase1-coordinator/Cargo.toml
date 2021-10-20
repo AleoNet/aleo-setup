@@ -19,8 +19,7 @@ setup-utils = { path = "../setup-utils" }
 snarkvm-curves = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c" }
 
 anyhow = { version = "1.0.37" }
-chrono = { version = "0.4", features = ["serde"] }
-chrono-humanize = { version = "0.2" }
+time = { version = "0.2", features = ["serde"] }
 fs-err = { version = "2.6.0" }
 itertools = "0.10"
 futures = { version = "0.3" }

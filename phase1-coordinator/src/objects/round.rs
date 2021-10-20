@@ -15,12 +15,12 @@ use crate::{
     CoordinatorError,
 };
 
-use chrono::{DateTime, Utc};
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use serde_aux::prelude::*;
 use serde_diff::SerdeDiff;
 use std::{collections::HashSet, hash::Hash};
+use time::PrimitiveDateTime;
 use tracing::{debug, error, trace, warn};
 
 use super::Task;
@@ -74,9 +74,9 @@ pub struct Round {
     #[serde(deserialize_with = "deserialize_number_from_string")]
     height: u64,
     #[serde_diff(opaque)]
-    started_at: Option<DateTime<Utc>>,
+    started_at: Option<PrimitiveDateTime>,
     #[serde_diff(opaque)]
-    finished_at: Option<DateTime<Utc>>,
+    finished_at: Option<PrimitiveDateTime>,
     contributor_ids: Vec<Participant>,
     verifier_ids: Vec<Participant>,
     chunks: Vec<Chunk>,
@@ -89,7 +89,7 @@ impl Round {
         environment: &Environment,
         storage: &mut Disk,
         round_height: u64,
-        started_at: DateTime<Utc>,
+        started_at: PrimitiveDateTime,
         contributor_ids: Vec<Participant>,
     ) -> Result<Self, CoordinatorError> {
         debug!("Starting to create round {}", round_height);
@@ -758,7 +758,7 @@ impl Round {
 
         // If all chunks are complete and the finished at timestamp has not been set yet,
         // then set it with the current UTC timestamp.
-        self.try_finish(Utc::now());
+        self.try_finish(PrimitiveDateTime::now());
 
         Ok(())
     }
@@ -1094,7 +1094,7 @@ impl Round {
     /// then set it with the current UTC timestamp.
     ///
     #[inline]
-    pub(crate) fn try_finish(&mut self, timestamp: DateTime<Utc>) {
+    pub(crate) fn try_finish(&mut self, timestamp: PrimitiveDateTime) {
         if self.is_complete() && self.finished_at.is_none() {
             self.finished_at = Some(timestamp);
         }
@@ -1105,7 +1105,7 @@ impl Round {
     ///
     #[cfg(test)]
     #[inline]
-    pub(crate) fn try_finish_testing_only_unsafe(&mut self, timestamp: DateTime<Utc>) {
+    pub(crate) fn try_finish_testing_only_unsafe(&mut self, timestamp: PrimitiveDateTime) {
         if self.is_complete() {
             warn!("Modifying finished_at timestamp for testing only");
             self.finished_at = Some(timestamp);

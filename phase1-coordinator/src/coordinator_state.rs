@@ -10,13 +10,13 @@ use crate::{
 };
 use phase1::ProvingSystem;
 
-use chrono::{DateTime, Duration, Utc};
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::{
     collections::{HashMap, HashSet, LinkedList},
     iter::FromIterator,
 };
+use time::{Duration, PrimitiveDateTime};
 use tracing::*;
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -36,7 +36,7 @@ pub struct ChunkLock {
     /// The id of the chunk which is locked.
     chunk_id: u64,
     /// The time that the chunk was locked.
-    lock_time: DateTime<Utc>,
+    lock_time: PrimitiveDateTime,
 }
 
 impl ChunkLock {
@@ -55,7 +55,7 @@ impl ChunkLock {
     }
 
     /// The time that the chunk was locked.
-    pub fn lock_time(&self) -> &DateTime<Utc> {
+    pub fn lock_time(&self) -> &PrimitiveDateTime {
         &self.lock_time
     }
 }
@@ -71,15 +71,15 @@ pub struct ParticipantInfo {
     /// The bucket ID that this participant starts contributing from.
     bucket_id: u64,
     /// The timestamp of the first seen instance of this participant.
-    first_seen: DateTime<Utc>,
+    first_seen: PrimitiveDateTime,
     /// The timestamp of the last seen instance of this participant.
-    last_seen: DateTime<Utc>,
+    last_seen: PrimitiveDateTime,
     /// The timestamp when this participant started the round.
-    started_at: Option<DateTime<Utc>>,
+    started_at: Option<PrimitiveDateTime>,
     /// The timestamp when this participant finished the round.
-    finished_at: Option<DateTime<Utc>>,
+    finished_at: Option<PrimitiveDateTime>,
     /// The timestamp when this participant was dropped from the round.
-    dropped_at: Option<DateTime<Utc>>,
+    dropped_at: Option<PrimitiveDateTime>,
     /// A map of chunk IDs to locks on chunks that this participant currently holds.
     locked_chunks: HashMap<u64, ChunkLock>,
     /// The list of (chunk ID, contribution ID) tasks that this participant is assigned to compute.
@@ -899,9 +899,9 @@ pub struct RoundMetrics {
     /// The average seconds per task calculated from all current verifiers.
     verifier_average_per_task: Option<u64>,
     /// The timestamp when the coordinator started aggregation of the current round.
-    started_aggregation_at: Option<DateTime<Utc>>,
+    started_aggregation_at: Option<PrimitiveDateTime>,
     /// The timestamp when the coordinator finished aggregation of the current round.
-    finished_aggregation_at: Option<DateTime<Utc>>,
+    finished_aggregation_at: Option<PrimitiveDateTime>,
     /// The estimated number of seconds remaining for the current round to finish.
     estimated_finish_time: Option<u64>,
     /// The estimated number of seconds remaining for the current round to aggregate.
@@ -909,7 +909,7 @@ pub struct RoundMetrics {
     /// The estimated number of seconds remaining until the queue is closed for the next round.
     estimated_wait_time: Option<u64>,
     /// The timestamp of the earliest start time for the next round.
-    next_round_after: Option<DateTime<Utc>>,
+    next_round_after: Option<PrimitiveDateTime>,
 }
 
 impl Default for RoundMetrics {
@@ -940,7 +940,7 @@ pub struct CoordinatorState {
     status: CoordinatorStatus,
     /// The map of queue participants with a reliability score, an assigned future
     /// round, a last seen timestamp, and their time of joining.
-    queue: HashMap<Participant, (u8, Option<u64>, DateTime<Utc>, DateTime<Utc>)>,
+    queue: HashMap<Participant, (u8, Option<u64>, PrimitiveDateTime, PrimitiveDateTime)>,
     /// The map of unique participants for the next round.
     next: HashMap<Participant, ParticipantInfo>,
     /// The metrics for the current round of the ceremony.
@@ -1283,7 +1283,7 @@ impl CoordinatorState {
     pub fn queue_contributor_info(
         &self,
         participant: &Participant,
-    ) -> Option<&(u8, Option<u64>, DateTime<Utc>, DateTime<Utc>)> {
+    ) -> Option<&(u8, Option<u64>, PrimitiveDateTime, PrimitiveDateTime)> {
         self.queue.get(participant)
     }
 
@@ -1291,7 +1291,7 @@ impl CoordinatorState {
     /// Returns a list of the contributors currently in the queue.
     ///
     #[inline]
-    pub fn queue_contributors(&self) -> Vec<(Participant, (u8, Option<u64>, DateTime<Utc>, DateTime<Utc>))> {
+    pub fn queue_contributors(&self) -> Vec<(Participant, (u8, Option<u64>, PrimitiveDateTime, PrimitiveDateTime))> {
         self.queue
             .clone()
             .into_par_iter()
@@ -2588,10 +2588,10 @@ impl CoordinatorState {
                     let exceeded_chunks_string: String = exceeded_chunk_names.join(", ");
 
                     tracing::warn!(
-                        "Dropping participant {} because it has exceeded the maximum ({}) allowed time \
+                        "Dropping participant {} because it has exceeded the maximum ({:?}) allowed time \
                         it is allowed to hold a lock (on chunks {}).",
                         participant,
-                        chrono_humanize::HumanTime::from(participant_lock_timeout),
+                        participant_lock_timeout,
                         exceeded_chunks_string,
                     );
                     Some(self.drop_participant(participant, time))
@@ -2625,11 +2625,11 @@ impl CoordinatorState {
                 // Check if the participant is still live and not a coordinator contributor.
                 if elapsed > contributor_seen_timeout && !self.is_coordinator_contributor(&participant) {
                     tracing::warn!(
-                        "Dropping participant {} because it has exceeded the maximum ({}) allowed time \
-                        since it was last seen by the coordinator (last seen {} ago).",
+                        "Dropping participant {} because it has exceeded the maximum ({:?}) allowed time \
+                        since it was last seen by the coordinator (last seen {:?} ago).",
                         participant,
-                        chrono_humanize::HumanTime::from(contributor_seen_timeout),
-                        chrono_humanize::HumanTime::from(elapsed)
+                        contributor_seen_timeout,
+                        elapsed
                     );
                     // Drop the participant.
                     Some(self.drop_participant(participant, time))

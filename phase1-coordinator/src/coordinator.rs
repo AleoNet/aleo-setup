@@ -30,11 +30,11 @@ use crate::{
 };
 use setup_utils::calculate_hash;
 
-use chrono::{DateTime, Utc};
 use std::{
     fmt,
     sync::{Arc, RwLock},
 };
+use time::PrimitiveDateTime;
 use tracing::*;
 
 #[cfg(any(test, feature = "operator"))]
@@ -280,7 +280,7 @@ impl From<CoordinatorError> for anyhow::Error {
 /// for mocking system time during testing.
 pub trait TimeSource: Send + Sync {
     /// Provide the current time now in the UTC timezone
-    fn utc_now(&self) -> DateTime<Utc>;
+    fn utc_now(&self) -> PrimitiveDateTime;
 }
 
 // Private tuple field to force use of constructor.
@@ -295,39 +295,39 @@ impl SystemTimeSource {
 }
 
 impl TimeSource for SystemTimeSource {
-    fn utc_now(&self) -> DateTime<Utc> {
-        Utc::now()
+    fn utc_now(&self) -> PrimitiveDateTime {
+        PrimitiveDateTime::now()
     }
 }
 
 /// A time source to use for testing, allows the current time to be
 /// set manually.
 pub struct MockTimeSource {
-    time: RwLock<DateTime<Utc>>,
+    time: RwLock<PrimitiveDateTime>,
 }
 
 impl MockTimeSource {
-    pub fn new(time: DateTime<Utc>) -> Self {
+    pub fn new(time: PrimitiveDateTime) -> Self {
         Self {
             time: RwLock::new(time),
         }
     }
 
-    pub fn set_time(&self, time: DateTime<Utc>) {
+    pub fn set_time(&self, time: PrimitiveDateTime) {
         *self.time.write().expect("Unable to lock to write time") = time;
     }
 
-    pub fn time(&self) -> DateTime<Utc> {
+    pub fn time(&self) -> PrimitiveDateTime {
         *self.time.read().expect("Unable to obtain lock to read time")
     }
 
-    pub fn update<F: Fn(DateTime<Utc>) -> DateTime<Utc>>(&self, f: F) {
+    pub fn update<F: Fn(PrimitiveDateTime) -> PrimitiveDateTime>(&self, f: F) {
         self.set_time(f(self.time()))
     }
 }
 
 impl TimeSource for MockTimeSource {
-    fn utc_now(&self) -> DateTime<Utc> {
+    fn utc_now(&self) -> PrimitiveDateTime {
         *self.time.read().expect("Unable to obtain lock to read time")
     }
 }
@@ -581,7 +581,7 @@ impl Coordinator {
     /// Returns a list of the contributors currently in the queue.
     ///
     #[inline]
-    pub fn queue_contributors(&self) -> Vec<(Participant, (u8, Option<u64>, DateTime<Utc>, DateTime<Utc>))> {
+    pub fn queue_contributors(&self) -> Vec<(Participant, (u8, Option<u64>, PrimitiveDateTime, PrimitiveDateTime))> {
         self.state.queue_contributors()
     }
 
@@ -1275,7 +1275,7 @@ impl Coordinator {
     /// Attempts to advance the ceremony to the next round.
     ///
     #[tracing::instrument(skip(self, started_at))]
-    pub fn try_advance(&mut self, started_at: DateTime<Utc>) -> Result<u64, CoordinatorError> {
+    pub fn try_advance(&mut self, started_at: PrimitiveDateTime) -> Result<u64, CoordinatorError> {
         tracing::debug!("Trying to advance to the next round.");
 
         // Check that the current round height matches in storage and self.
@@ -1954,7 +1954,7 @@ impl Coordinator {
     #[inline]
     pub(crate) fn next_round(
         &mut self,
-        started_at: DateTime<Utc>,
+        started_at: PrimitiveDateTime,
         contributors: Vec<Participant>,
     ) -> Result<u64, CoordinatorError> {
         // Check that the next round has at least one authorized contributor.
@@ -2047,7 +2047,7 @@ impl Coordinator {
     /// and run `Initialization` to start the ceremony.
     ///
     #[inline]
-    pub(super) fn run_initialization(&mut self, started_at: DateTime<Utc>) -> Result<u64, CoordinatorError> {
+    pub(super) fn run_initialization(&mut self, started_at: PrimitiveDateTime) -> Result<u64, CoordinatorError> {
         // Check that the ceremony has not begun yet.
         if Self::load_current_round_height(&self.storage).is_ok() {
             return Err(CoordinatorError::RoundAlreadyInitialized);
