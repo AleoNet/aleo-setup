@@ -4,8 +4,6 @@ use thiserror::Error;
 pub enum ContributeError {
     #[error("Could not read passphrase")]
     CouldNotReadPassphraseError,
-    #[error("Failed running contribute")]
-    FailedRunningContributeError,
     #[error("Unsupported decryptor")]
     UnsupportedDecryptorError,
 }

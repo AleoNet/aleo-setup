@@ -1777,12 +1777,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "panic-control"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "159973aebc43b4640619042b3bf160e3b6348000a949e37c0806ae6acc79d6c7"
-
-[[package]]
 name = "parking_lot"
 version = "0.11.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2776,7 +2770,6 @@ dependencies = [
  "http",
  "i18n-embed 0.9.4",
  "indicatif",
- "panic-control",
  "phase1",
  "phase1-cli",
  "phase1-coordinator",

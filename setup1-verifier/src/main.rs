@@ -62,7 +62,7 @@ async fn request_coordinator_public_settings(coordinator_url: &Url) -> anyhow::R
 async fn main() {
     let options = Options::from_args();
 
-    crate::utils::init_logger();
+    crate::utils::logger::init_logger();
 
     let public_settings = request_coordinator_public_settings(&options.api_url)
         .await

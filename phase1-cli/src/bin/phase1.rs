@@ -44,49 +44,59 @@ fn execute_cmd<E: Engine>(opts: Phase1Opts) {
     let now = Instant::now();
     match command {
         Command::New(opt) => {
-            new_challenge(CHALLENGE_IS_COMPRESSED, &opt.challenge_fname, &parameters);
+            let challenge = new_challenge(CHALLENGE_IS_COMPRESSED, &parameters);
+            std::fs::write(&opt.challenge_fname, challenge).expect("Unable to create a challenge file");
         }
         Command::Contribute(opt) => {
+            let challenge = std::fs::read(opt.challenge_fname).expect("unable read challenge file");
             // contribute to the randomness
             let seed = hex::decode(&read_to_string(&opts.seed).expect("should have read seed").trim())
                 .expect("seed should be a hex string");
             let rng = derive_rng_from_seed(&seed);
-            contribute(
+            let contribution = contribute(
                 CHALLENGE_IS_COMPRESSED,
-                &opt.challenge_fname,
+                &challenge,
                 CONTRIBUTION_IS_COMPRESSED,
-                &opt.response_fname,
                 CHECK_CONTRIBUTION_INPUT_FOR_CORRECTNESS,
                 &parameters,
                 rng,
             );
+            std::fs::write(opt.response_fname, contribution).expect("unable to create response file");
         }
         Command::Beacon(opt) => {
+            let challenge = std::fs::read(opt.challenge_fname).expect("unable read challenge file");
             // use the beacon's randomness
             // Place block hash here (block number #564321)
             let beacon_hash = hex::decode(&opt.beacon_hash).expect("could not hex decode beacon hash");
             let rng = derive_rng_from_seed(&beacon_randomness(from_slice(&beacon_hash)));
-            contribute(
+            let contribution = contribute(
                 CHALLENGE_IS_COMPRESSED,
-                &opt.challenge_fname,
+                &challenge,
                 CONTRIBUTION_IS_COMPRESSED,
-                &opt.response_fname,
                 CHECK_CONTRIBUTION_INPUT_FOR_CORRECTNESS,
                 &parameters,
                 rng,
             );
+            std::fs::write(opt.response_fname, contribution).expect("unable to create response file");
         }
         Command::VerifyAndTransformPokAndCorrectness(opt) => {
             // we receive a previous participation, verify it, and generate a new challenge from it
-            transform_pok_and_correctness(
+            let challenge =
+                std::fs::read(opt.challenge_fname).expect("Unable to read the challenge file in this directory");
+            let response =
+                std::fs::read(opt.response_fname).expect("Unable to read the response file in this directory");
+
+            let new_challenge = transform_pok_and_correctness(
                 CHALLENGE_IS_COMPRESSED,
-                &opt.challenge_fname,
+                &challenge,
                 CONTRIBUTION_IS_COMPRESSED,
-                &opt.response_fname,
+                &response,
                 CHALLENGE_IS_COMPRESSED,
-                &opt.new_challenge_fname,
                 &parameters,
             );
+
+            std::fs::write(opt.new_challenge_fname, new_challenge)
+                .expect("Unable to create new challenge file in this directory");
         }
         Command::VerifyAndTransformRatios(opt) => {
             // we receive a previous participation, verify it, and generate a new challenge from it

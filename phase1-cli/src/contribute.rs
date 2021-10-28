@@ -3,97 +3,56 @@ use setup_utils::{calculate_hash, CheckForCorrectness, UseCompression};
 
 use snarkvm_curves::PairingEngine as Engine;
 
-use memmap::*;
 use rand::{CryptoRng, Rng};
-use std::{
-    fs::OpenOptions,
-    io::{Read, Write},
-};
+use std::io::{Read, Write};
 
 pub fn contribute<T: Engine + Sync>(
     compressed_input: UseCompression,
-    challenge_filename: &str,
+    challenge: &[u8],
     compressed_output: UseCompression,
-    response_filename: &str,
     check_input_correctness: CheckForCorrectness,
     parameters: &Phase1Parameters<T>,
     mut rng: impl Rng + CryptoRng,
-) {
-    // Try to load challenge file from disk.
-    let reader = OpenOptions::new()
-        .read(true)
-        .open(challenge_filename)
-        .expect("unable open challenge file");
-    {
-        let metadata = reader
-            .metadata()
-            .expect("unable to get filesystem metadata for challenge file");
-        let expected_challenge_length = match compressed_input {
-            UseCompression::Yes => parameters.contribution_size - parameters.public_key_size,
-            UseCompression::No => parameters.accumulator_size,
-        };
-
-        if metadata.len() != (expected_challenge_length as u64) {
-            panic!(
-                "The size of challenge file should be {}, but it's {}, so something isn't right.",
-                expected_challenge_length,
-                metadata.len()
-            );
-        }
-    }
-
-    let readable_map = unsafe {
-        MmapOptions::new()
-            .map(&reader)
-            .expect("unable to create a memory map for input")
+) -> Vec<u8> {
+    let expected_challenge_length = match compressed_input {
+        UseCompression::Yes => parameters.contribution_size - parameters.public_key_size,
+        UseCompression::No => parameters.accumulator_size,
     };
 
-    // Create response file in this directory
-    let writer = OpenOptions::new()
-        .read(true)
-        .write(true)
-        .create_new(true)
-        .open(response_filename)
-        .expect("unable to create response file");
+    if challenge.len() != expected_challenge_length {
+        panic!(
+            "The size of challenge file should be {}, but it's {}, so something isn't right.",
+            expected_challenge_length,
+            challenge.len()
+        );
+    }
 
     let required_output_length = match compressed_output {
         UseCompression::Yes => parameters.contribution_size,
         UseCompression::No => parameters.accumulator_size + parameters.public_key_size,
     };
 
-    writer
-        .set_len(required_output_length as u64)
-        .expect("must make output file large enough");
-
-    let mut writable_map = unsafe {
-        MmapOptions::new()
-            .map_mut(&writer)
-            .expect("unable to create a memory map for output")
-    };
+    let mut response = vec![0; required_output_length];
 
     tracing::info!("Calculating previous contribution hash...");
 
-    assert!(
-        UseCompression::No == compressed_input,
+    assert_eq!(
+        UseCompression::No,
+        compressed_input,
         "Hashing the compressed file in not yet defined"
     );
-    let current_accumulator_hash = calculate_hash(&readable_map);
+    let current_accumulator_hash = calculate_hash(&challenge);
 
-    {
-        tracing::info!("`challenge` file contains decompressed points and has a hash:");
-        log_hash(&current_accumulator_hash);
+    tracing::info!("`challenge` file contains decompressed points and has a hash:");
+    log_hash(&current_accumulator_hash);
 
-        (&mut writable_map[0..])
-            .write_all(&current_accumulator_hash)
-            .expect("unable to write a challenge hash to mmap");
-
-        writable_map.flush().expect("unable to write hash to response file");
-    }
+    (&mut response[0..])
+        .write_all(&current_accumulator_hash)
+        .expect("unable to write a challenge hash to mmap");
 
     {
         let mut challenge_hash = [0; 64];
-        let mut memory_slice = readable_map.get(0..64).expect("must read point data from file");
-        memory_slice
+        (&challenge[..])
             .read_exact(&mut challenge_hash)
             .expect("couldn't read hash of challenge file from response file");
 
@@ -112,8 +71,8 @@ pub fn contribute<T: Engine + Sync>(
 
     // this computes a transformation and writes it
     Phase1::computation(
-        &readable_map,
-        &mut writable_map,
+        &challenge,
+        &mut response,
         compressed_input,
         compressed_output,
         check_input_correctness,
@@ -126,14 +85,11 @@ pub fn contribute<T: Engine + Sync>(
 
     // Write the public key
     public_key
-        .write(&mut writable_map, compressed_output, &parameters)
+        .write(&mut response, compressed_output, &parameters)
         .expect("unable to write public key");
 
-    writable_map.flush().expect("must flush a memory map");
-
     // Get the hash of the contribution, so the user can compare later
-    let output_readonly = writable_map.make_read_only().expect("must make a map readonly");
-    let contribution_hash = calculate_hash(&output_readonly);
+    let contribution_hash = calculate_hash(&response);
 
     tracing::info!(
         "Done!\n\n\
@@ -142,6 +98,7 @@ pub fn contribute<T: Engine + Sync>(
     );
     log_hash(&contribution_hash);
     tracing::info!("Thank you for your participation, much appreciated! :)");
+    response
 }
 
 fn log_hash(hash: &[u8]) {

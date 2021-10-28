@@ -1,5 +1,4 @@
 use std::{
-    fs,
     str::FromStr,
     time::{Duration, Instant},
 };
@@ -20,10 +19,7 @@ use serde::{Deserialize, Serialize};
 use tracing::{debug, error, info};
 use url::Url;
 
-use crate::{
-    errors::VerifierError,
-    utils::{authentication::AleoAuthentication, create_parent_directory, remove_file_if_exists, write_to_file},
-};
+use crate::{errors::VerifierError, utils::authentication::AleoAuthentication};
 
 const NO_TASKS_DELAY: Duration = Duration::from_secs(5);
 const UPLOAD_TASK_ERROR_DELAY: Duration = Duration::from_secs(5);
@@ -104,129 +100,33 @@ impl Verifier {
     }
 
     ///
-    /// Downloads the challenge file from the coordinator and stores it to the verifier filesystem.
-    /// Returns the hash of the downloaded response file. Otherwise, returns a `VerifierError`
-    ///
-    pub async fn process_challenge_file(
-        &self,
-        chunk_id: u64,
-        contribution_id: u64,
-        challenge_locator: &str,
-    ) -> Result<[u8; 64], VerifierError> {
-        // Download the challenge file from the coordinator.
-        let challenge_file = self.download_challenge_file(chunk_id, contribution_id).await?;
-
-        // Compute the challenge hash using the challenge file.
-        let challenge_hash = calculate_hash(&challenge_file);
-
-        debug!(
-            "Writing the challenge file (size: {}) {} to disk",
-            challenge_file.len(),
-            &challenge_locator
-        );
-
-        // Write the challenge file to disk.
-        fs::write(&challenge_locator, challenge_file)?;
-
-        debug!("The challenge hash is {}", pretty_hash(&challenge_hash));
-
-        Ok(challenge_hash)
-    }
-
-    ///
-    /// Downloads the response file from the coordinator and stores it to the verifier filesystem.
-    /// Returns the hash of the downloaded response file. Otherwise, returns a `VerifierError`
-    ///
-    pub async fn process_response_file(
-        &self,
-        chunk_id: u64,
-        contribution_id: u64,
-        response_locator: &str,
-    ) -> Result<[u8; 64], VerifierError> {
-        // Download the response file from the coordinator.
-        let response_file = self.download_response_file(chunk_id, contribution_id).await?;
-
-        // Compute the response hash using the response file.
-        let response_hash = calculate_hash(&response_file);
-
-        debug!(
-            "Writing the response file (size: {}) {} to disk",
-            response_file.len(),
-            &response_locator
-        );
-
-        // Write the response to a local file
-        write_to_file(&response_locator, response_file);
-
-        debug!("The response hash is {}", pretty_hash(&response_hash));
-
-        Ok(response_hash)
-    }
-
-    ///
-    /// Returns the next challenge file and the hash of the next challenge file at the given locator.
-    /// Otherwise, returns a `VerifierError`
-    ///
-    pub async fn read_next_challenge_file(
-        &self,
-        next_challenge_locator: &str,
-    ) -> Result<(Vec<u8>, [u8; 64]), VerifierError> {
-        info!("Reading the next challenge locator at {}", &next_challenge_locator);
-
-        let next_challenge_file = fs::read(&next_challenge_locator)?;
-
-        // Compute the next challenge hash using the next challenge file.
-        let next_challenge_hash = calculate_hash(&next_challenge_file);
-
-        debug!("The next challenge hash is {}", pretty_hash(&next_challenge_hash));
-
-        Ok((next_challenge_file, next_challenge_hash))
-    }
-
-    ///
     /// Performs verification on a contribution with the given chunk id and file locators.
     /// Returns the time (in milliseconds) it took for verification to execute.
     ///
-    pub fn run_verification(
-        &self,
-        chunk_id: u64,
-        challenge_file_locator: &str,
-        response_locator: &str,
-        next_challenge_locator: &str,
-    ) -> u128 {
-        // Create the parent directory for the `next_challenge_locator` if it doesn't already exist.
-        create_parent_directory(&next_challenge_locator);
-        // Remove the `next_challenge_locator` if it already exists.
-        remove_file_if_exists(&next_challenge_locator);
-
+    pub fn run_verification(&self, chunk_id: u64, challenge: &[u8], response: &[u8]) -> Vec<u8> {
         let settings = self.environment.parameters();
 
         let compressed_challenge = self.environment.compressed_inputs();
         let compressed_response = self.environment.compressed_outputs();
 
-        let start = Instant::now();
         match settings.curve() {
             CurveKind::Bls12_377 => transform_pok_and_correctness(
                 compressed_challenge,
-                &challenge_file_locator,
+                &challenge,
                 compressed_response,
-                &response_locator,
+                &response,
                 compressed_challenge,
-                &next_challenge_locator,
                 &phase1_chunked_parameters!(Bls12_377, settings, chunk_id),
             ),
             CurveKind::BW6 => transform_pok_and_correctness(
                 compressed_challenge,
-                &challenge_file_locator,
+                &challenge,
                 compressed_response,
-                &response_locator,
+                &response,
                 compressed_challenge,
-                &next_challenge_locator,
                 &phase1_chunked_parameters!(BW6_761, settings, chunk_id),
             ),
-        };
-
-        start.elapsed().as_millis()
+        }
     }
 
     ///
@@ -326,7 +226,7 @@ impl Verifier {
             info!("Got a task: {:?}", task);
 
             // Run the verification operations.
-            if let Err(error) = self.try_verify(&task).await {
+            if let Err(error) = self.verify(&task).await {
                 error!("Error while verifying {}", error);
                 tokio::time::sleep(UPLOAD_TASK_ERROR_DELAY).await;
             }
@@ -347,47 +247,45 @@ impl Verifier {
     /// 9. Attempts to apply the verification in the ceremony
     ///     - Request to the coordinator to run `try_verify`
     ///
-    pub async fn try_verify(&self, task: &AssignedTask) -> Result<(), VerifierError> {
+    pub async fn verify(&self, task: &AssignedTask) -> Result<(), VerifierError> {
         let chunk_id = task.chunk_id;
         let contribution_id = task.contribution_id;
-        let challenge_locator = "challenge";
-        let response_locator = "response";
-        let next_challenge_locator = "next_challenge";
 
-        // Download and process the challenge file.
-        let challenge_hash = self
-            .process_challenge_file(chunk_id, contribution_id, &challenge_locator)
-            .await?;
+        // Download the challenge file from the coordinator
+        let challenge = self.download_challenge_file(chunk_id, contribution_id).await?;
+        let challenge_hash = calculate_hash(&challenge);
+        debug!("The challenge hash is {}", pretty_hash(&challenge_hash));
 
-        // Download and process the response file.
-        let response_hash = self
-            .process_response_file(chunk_id, contribution_id, &response_locator)
-            .await?;
+        // Download the response file from the coordinator
+        let response = self.download_response_file(chunk_id, contribution_id).await?;
+        let response_hash = calculate_hash(&response);
+        debug!("The response hash is {}", pretty_hash(&response_hash));
 
-        // Run verification on a chunk with the given locators.
         info!(
             "Running verification on chunk {} contribution {}",
             chunk_id, contribution_id
         );
 
-        let duration = self.run_verification(chunk_id, &challenge_locator, &response_locator, &next_challenge_locator);
+        let start = Instant::now();
+        let next_challenge = self.run_verification(chunk_id, &challenge, &response);
+        let duration = start.elapsed().as_millis();
         info!(
             "Verification on chunk {} contribution {} completed in {} ms",
             chunk_id, contribution_id, duration,
         );
 
-        // Fetch the next challenge file from the filesystem.
-        let (next_challenge_file, next_challenge_hash) = self.read_next_challenge_file(&next_challenge_locator).await?;
+        let next_challenge_hash = calculate_hash(&next_challenge);
+        debug!("The next challenge hash is {}", pretty_hash(&next_challenge_hash));
 
-        // Verify that the next challenge file stores the correct response hash.
-        self.verify_response_hash(&next_challenge_file, &response_hash)?;
+        // Verify that the next challenge stores the correct response hash.
+        self.verify_response_hash(&next_challenge, &response_hash)?;
 
         // Construct a signature and serialize the contribution.
         let signature_and_next_challenge_bytes = self.serialize_contribution_and_signature(
             &challenge_hash,
             &response_hash,
             &next_challenge_hash,
-            next_challenge_file,
+            next_challenge,
         )?;
 
         // Upload the signature and new challenge file

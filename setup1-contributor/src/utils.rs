@@ -12,28 +12,9 @@ use anyhow::Result;
 #[cfg(test)]
 use fs_err::{create_dir_all, write};
 use rand::{CryptoRng, Rng};
-use std::{
-    convert::TryFrom,
-    fs::{remove_file, File},
-    io::Read,
-    path::Path,
-    str::FromStr,
-};
+use std::{convert::TryFrom, str::FromStr};
 #[cfg(test)]
 use tracing::error;
-
-pub fn remove_file_if_exists(file_path: &str) -> Result<()> {
-    if Path::new(file_path).exists() {
-        remove_file(file_path)?;
-    }
-    Ok(())
-}
-
-pub fn read_from_file(file_name: &str) -> Result<Vec<u8>> {
-    let mut file = vec![];
-    File::open(file_name)?.read_to_end(&mut file)?;
-    Ok(file)
-}
 
 ///
 /// This function creates the `file_path`'s parent directories if it

@@ -31,7 +31,6 @@ hex = { version = "0.4" }
 http = "0.2"
 i18n-embed = { version = "0.9", features = ["desktop-requester"] }
 indicatif = { version = "0.15.0" }
-panic-control = {version = "0.1.4" }
 rand = { version = "0.8" }
 regex = "1"
 reqwest = "0.11"

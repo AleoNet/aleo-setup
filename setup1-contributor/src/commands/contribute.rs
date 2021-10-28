@@ -6,13 +6,7 @@ use crate::{
         confirmation_key::{print_key_and_remove_the_file, ConfirmationKey},
         AleoSetupKeys,
     },
-    utils::{
-        create_parameters_for_chunk,
-        get_authorization_value,
-        read_from_file,
-        remove_file_if_exists,
-        sign_contribution_state,
-    },
+    utils::{create_parameters_for_chunk, get_authorization_value, sign_contribution_state},
 };
 
 use phase1::helpers::converters::CurveKind;
@@ -31,26 +25,14 @@ use anyhow::{Context, Result};
 use dialoguer::{theme::ColorfulTheme, Confirm, Input};
 use fs_err::File;
 use indicatif::{ProgressBar, ProgressStyle};
-use panic_control::{spawn_quiet, ThreadResultExt};
 use rand::{CryptoRng, Rng};
 use regex::Regex;
 use secrecy::{ExposeSecret, SecretString, SecretVec};
 use setup_utils::derive_rng_from_seed;
-use std::{
-    collections::HashSet,
-    convert::TryFrom,
-    io::{Read, Write},
-    path::PathBuf,
-    str::FromStr,
-    sync::Arc,
-    time::Duration,
-};
+use std::{collections::HashSet, convert::TryFrom, io::Read, path::PathBuf, str::FromStr, sync::Arc, time::Duration};
 use tokio::time::{sleep, Instant};
 use tracing::{error, info};
 use url::Url;
-
-const CHALLENGE_FILENAME: &str = "challenge";
-const RESPONSE_FILENAME: &str = "response";
 
 const DELAY_AFTER_ERROR: Duration = Duration::from_secs(60);
 const DELAY_POLL_CEREMONY: Duration = Duration::from_secs(5);
@@ -192,9 +174,6 @@ impl Contribute {
             let incomplete_chunks = self.get_non_contributed_and_available_chunks(&ceremony);
             if incomplete_chunks.is_empty() {
                 if non_contributed_chunks.is_empty() {
-                    remove_file_if_exists(CHALLENGE_FILENAME)?;
-                    remove_file_if_exists(RESPONSE_FILENAME)?;
-
                     let completed_message = "Finished!";
                     progress_bar.finish_with_message(completed_message);
                     info!(completed_message);
@@ -215,13 +194,13 @@ impl Contribute {
 
             progress_bar.set_message(&format!("Contributing to chunk {}...", chunk_id));
 
-            self.download_challenge(chunk_id, lock_response.contribution_id, CHALLENGE_FILENAME, auth_rng)
+            let challenge_file = self
+                .download_challenge(chunk_id, lock_response.contribution_id, auth_rng)
                 .await?;
 
             let exposed_seed = self.seed.expose_secret();
             let seeded_rng = derive_rng_from_seed(&exposed_seed[..]);
             let start = Instant::now();
-            remove_file_if_exists(RESPONSE_FILENAME)?;
 
             // Fetch parameters required for contribution.
             let parameters = create_parameters_for_chunk::<E>(&self.environment, chunk_id as usize)?;
@@ -230,31 +209,17 @@ impl Contribute {
             let check_input_correctness = self.environment.check_input_for_correctness();
 
             // Run the contribution.
-            let h = spawn_quiet(move || {
-                contribute(
-                    compressed_input,
-                    CHALLENGE_FILENAME,
-                    compressed_output,
-                    RESPONSE_FILENAME,
-                    check_input_correctness,
-                    &parameters,
-                    seeded_rng,
-                );
-            });
-            let result = h.join();
-            if result.is_err() {
-                if let Some(panic_value) = result.panic_value_as_str() {
-                    error!("Contribute failed: {}", panic_value);
-                }
-                return Err(ContributeError::FailedRunningContributeError.into());
-            }
+            let response_file = contribute(
+                compressed_input,
+                &challenge_file,
+                compressed_output,
+                check_input_correctness,
+                &parameters,
+                seeded_rng,
+            );
             let duration = start.elapsed();
 
             info!("Completed chunk {} in {} seconds", chunk_id, duration.as_secs());
-
-            // Read the challenge and response files.
-            let challenge_file = read_from_file(CHALLENGE_FILENAME)?;
-            let response_file = read_from_file(RESPONSE_FILENAME)?;
 
             // Hash the challenge and response files.
             let challenge_hash = calculate_hash(&challenge_file);
@@ -264,11 +229,6 @@ impl Contribute {
             let view_key = ViewKey::try_from(&self.private_key)?;
             let signed_contribution_state =
                 sign_contribution_state(&view_key.to_string(), &challenge_hash, &response_hash, None, auth_rng)?;
-
-            // Construct the serialized response
-            let mut file = File::open(RESPONSE_FILENAME)?;
-            let mut response_file = Vec::new();
-            file.read_to_end(&mut response_file)?;
 
             // Concatenate the signed contribution data and next challenge file.
             let verifier_flag = [0];
@@ -378,27 +338,23 @@ impl Contribute {
         &self,
         chunk_id: u64,
         contribution_id: u64,
-        file_path: &str,
         auth_rng: &mut R,
-    ) -> Result<()> {
+    ) -> Result<Vec<u8>> {
         let download_path = format!("/v1/download/challenge/{}/{}", chunk_id, contribution_id);
         let download_path_url = self.server_url.join(&download_path)?;
         let client = reqwest::Client::new();
         let authorization = get_authorization_value(&self.private_key, "GET", &download_path, auth_rng)?;
-        let mut response = client
+        let challenge = client
             .get(download_path_url.as_str())
             .header(http::header::AUTHORIZATION, authorization)
             .send()
             .await?
-            .error_for_status()?;
+            .error_for_status()?
+            .bytes()
+            .await?
+            .to_vec();
 
-        remove_file_if_exists(file_path)?;
-        let mut out = File::create(file_path)?;
-        while let Some(chunk) = response.chunk().await? {
-            out.write_all(&chunk)?;
-        }
-
-        Ok(())
+        Ok(challenge)
     }
 
     async fn upload_response<R: Rng + CryptoRng>(
