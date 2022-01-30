@@ -23,7 +23,7 @@ impl Verifier {
 
         info!("Verifier downloading a response file at {} ", path);
 
-        let authentication = AleoAuthentication::authenticate(&self.view_key, &method, &path)?;
+        let authentication = AleoAuthentication::authenticate(&self.private_key, &method, &path)?;
         match Client::new()
             .get(coordinator_api_url.join(&path).expect("Should create a path"))
             .header("Authorization", authentication.to_string())
@@ -69,7 +69,7 @@ impl Verifier {
 
         info!("Verifier downloading a challenge file at {} ", path);
 
-        let authentication = AleoAuthentication::authenticate(&self.view_key, &method, &path)?;
+        let authentication = AleoAuthentication::authenticate(&self.private_key, &method, &path)?;
         match Client::new()
             .get(coordinator_api_url.join(&path).expect("Should create a path"))
             .header("Authorization", authentication.to_string())
@@ -114,7 +114,7 @@ impl Verifier {
         let method = "post";
         let path = format!("/v1/upload/challenge/{}/{}", chunk_id, contribution_id);
 
-        let authentication = AleoAuthentication::authenticate(&self.view_key, &method, &path)?;
+        let authentication = AleoAuthentication::authenticate(&self.private_key, &method, &path)?;
 
         info!(
             "Verifier uploading a response with size {} to {} ",

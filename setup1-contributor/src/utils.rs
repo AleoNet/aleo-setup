@@ -5,7 +5,7 @@ use phase1_coordinator::{
 };
 use setup1_shared::structures::SetupKind;
 use snarkvm_curves::PairingEngine;
-use snarkvm_dpc::{parameters::testnet2::Testnet2Parameters, Address, PrivateKey, ViewKey};
+use snarkvm_dpc::{testnet2::Testnet2, Address, PrivateKey};
 use snarkvm_utilities::ToBytes;
 
 use anyhow::Result;
@@ -88,16 +88,15 @@ pub fn create_parameters_for_chunk<E: PairingEngine>(
 }
 
 pub fn get_authorization_value<R: Rng + CryptoRng>(
-    private_key: &PrivateKey<Testnet2Parameters>,
+    private_key: &PrivateKey<Testnet2>,
     method: &str,
     path: &str,
     rng: &mut R,
 ) -> Result<String> {
-    let view_key = ViewKey::try_from(private_key)?;
     let address = Address::try_from(private_key)?.to_string();
 
     let message = format!("{} {}", method.to_lowercase(), path.to_lowercase());
-    let signature = hex::encode(&view_key.sign(message.as_bytes(), rng)?.to_bytes_le()?);
+    let signature = hex::encode(&private_key.sign(message.as_bytes(), rng)?.to_bytes_le()?);
 
     let authorization = format!("Aleo {}:{}", address, signature);
     Ok(authorization)
@@ -116,8 +115,8 @@ pub fn sign_contribution_state<R: Rng + CryptoRng>(
     let contribution_state = ContributionState::new(challenge_hash, response_hash, next_challenge_hash);
     let message = contribution_state.signature_message()?;
 
-    let view_key = ViewKey::<Testnet2Parameters>::from_str(signing_key)?;
-    let signature = hex::encode(&view_key.sign(message.as_bytes(), rng)?.to_bytes_le()?);
+    let private_key = PrivateKey::<Testnet2>::from_str(signing_key)?;
+    let signature = hex::encode(&private_key.sign(message.as_bytes(), rng)?.to_bytes_le()?);
 
     let contribution_file_signature = ContributionFileSignature::new(signature, contribution_state)?;
 

@@ -3,6 +3,7 @@ use crate::{buffer_size, Result, UseCompression};
 
 use snarkvm_algorithms::cfg_chunks_mut;
 use snarkvm_curves::AffineCurve;
+use snarkvm_utilities::CanonicalSerialize;
 
 #[cfg(feature = "parallel")]
 use rayon::prelude::*;
@@ -30,7 +31,7 @@ pub trait BatchSerializer {
 impl<W: Write> Serializer for W {
     fn write_element(&mut self, element: &impl AffineCurve, compression: UseCompression) -> Result<()> {
         match compression {
-            UseCompression::Yes => element.serialize(self)?,
+            UseCompression::Yes => CanonicalSerialize::serialize(element, self)?,
             UseCompression::No => element.serialize_uncompressed(self)?,
         };
         Ok(())

@@ -36,7 +36,7 @@ dependencies = [
  "rpassword",
  "rust-embed",
  "scrypt",
- "sha2",
+ "sha2 0.9.8",
  "subtle",
  "which",
  "wsl",
@@ -57,7 +57,7 @@ dependencies = [
  "nom",
  "rand 0.8.4",
  "secrecy",
- "sha2",
+ "sha2 0.9.8",
  "tempfile",
 ]
 
@@ -82,6 +82,58 @@ dependencies = [
 ]
 
 [[package]]
+name = "aleo-std"
+version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "064ec11ce34a1748bbbae0fd9111e6cdcb2aa9eae714852da81eaa7cf864fc72"
+dependencies = [
+ "aleo-std-storage",
+ "aleo-std-time",
+ "aleo-std-timed",
+ "aleo-std-timer",
+]
+
+[[package]]
+name = "aleo-std-storage"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "503e2538d5158b869bc9c30c9754f9a23f4210987008014a9f118db99f22c217"
+dependencies = [
+ "dirs",
+]
+
+[[package]]
+name = "aleo-std-time"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7065e071b26763f3e5b1b5a587828227562365bee84fdd2629361ea0a08bfc8d"
+dependencies = [
+ "proc-macro2 0.4.30",
+ "quote 0.6.13",
+ "syn 0.15.44",
+]
+
+[[package]]
+name = "aleo-std-timed"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2b85aed1b7ca965b6613d14ab243c746316180401cbb9ba3b2cb22bff16fc08f"
+dependencies = [
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
+]
+
+[[package]]
+name = "aleo-std-timer"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "23bed34621f0713d3e750b59acdd3961a8950650fa7615b7cb40e6bc062a1d0b"
+dependencies = [
+ "colored",
+]
+
+[[package]]
 name = "ansi_term"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -101,9 +153,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.48"
+version = "1.0.52"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62e1f47f7dc0422027a4e370dd4548d4d66b26782e513e98dca1e689e058a80e"
+checksum = "84450d0b4a8bd1ba4144ce8ce718fbc5d071358b1e5384bace6536b3d1f2d5b3"
 
 [[package]]
 name = "arrayref"
@@ -116,6 +168,12 @@ name = "arrayvec"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "23b62fc65de8e4e7f52534fb52b0f3ed04746ae267519eef2a83941e8085068b"
+
+[[package]]
+name = "arrayvec"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8da52d66c7071e2e3fa2a1e5c6d088fec47b593032b254f5e980de8ea54454d6"
 
 [[package]]
 name = "atty"
@@ -136,9 +194,9 @@ checksum = "cdb031dd78e28731d87d56cc8ffef4a8f36ca26c38fe2de700543e627f8a464a"
 
 [[package]]
 name = "base58"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5024ee8015f02155eee35c711107ddd9a9bf3cb689cf2a9089c97e79b6e1ae83"
+checksum = "6107fe1be6682a68940da878d9e9f5e90ca5745b3dec9fd1bb393c8777d4f581"
 
 [[package]]
 name = "base64"
@@ -174,7 +232,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0a4e37d16930f5459780f5621038b6382b9bb37c19016f39fb6b5808d831f174"
 dependencies = [
  "crypto-mac 0.8.0",
- "digest",
+ "digest 0.9.0",
  "opaque-debug",
 ]
 
@@ -185,7 +243,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9e461a7034e85b211a4acb57ee2e6730b32912b06c08cc242243c39fc21ae6a2"
 dependencies = [
  "arrayref",
- "arrayvec",
+ "arrayvec 0.5.2",
+ "constant_time_eq",
+]
+
+[[package]]
+name = "blake2s_simd"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "db539cc2b5f6003621f1cd9ef92d7ded8ea5232c7de0f9faa2de251cd98730d4"
+dependencies = [
+ "arrayref",
+ "arrayvec 0.7.2",
  "constant_time_eq",
 ]
 
@@ -200,6 +269,15 @@ name = "block-buffer"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4152116fd6e9dadb291ae18fc1ec3575ed6d84c29642d97890f4b4a3417297e4"
+dependencies = [
+ "generic-array",
+]
+
+[[package]]
+name = "block-buffer"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f1d36a02058e76b040de25a4464ba1c80935655595b661505c8b39b664828b95"
 dependencies = [
  "generic-array",
 ]
@@ -325,6 +403,17 @@ dependencies = [
  "textwrap",
  "unicode-width",
  "vec_map",
+]
+
+[[package]]
+name = "colored"
+version = "2.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b3616f750b84d8f0de8a58bda93e08e2a81ad3f523089b05f1dffecab48c6cbd"
+dependencies = [
+ "atty",
+ "lazy_static",
+ "winapi",
 ]
 
 [[package]]
@@ -500,6 +589,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "crypto-common"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "683d6b536309245c849479fba3da410962a43ed8e51c26b729208ec0ac2798d0"
+dependencies = [
+ "generic-array",
+]
+
+[[package]]
 name = "crypto-mac"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -588,7 +686,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0b9fdf9972b2bd6af2d913799d9ebc165ea4d2e65878e329d9c6b372c4491b61"
 dependencies = [
  "byteorder",
- "digest",
+ "digest 0.9.0",
  "rand_core 0.5.1",
  "subtle",
  "zeroize",
@@ -622,10 +720,10 @@ checksum = "f0c960ae2da4de88a91b2d920c2a7233b400bc33cb28453a2987822d8392519b"
 dependencies = [
  "fnv",
  "ident_case",
- "proc-macro2",
- "quote",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
  "strsim 0.9.3",
- "syn",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -636,10 +734,10 @@ checksum = "2c34d8efb62d0c2d7f60ece80f75e5c63c1588ba68032740494b0b9a996466e3"
 dependencies = [
  "fnv",
  "ident_case",
- "proc-macro2",
- "quote",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
  "strsim 0.10.0",
- "syn",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -649,8 +747,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d9b5a2f4ac4969822c62224815d069952656cadc7084fdca9751e6d959189b72"
 dependencies = [
  "darling_core 0.10.2",
- "quote",
- "syn",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -660,8 +758,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ade7bff147130fe5e6d39f089c6bd49ec0250f35d70b2eebf72afdfc919f15cc"
 dependencies = [
  "darling_core 0.13.0",
- "quote",
- "syn",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -680,9 +778,9 @@ version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fcc3dd5e9e9c0b295d6e1e4d811fb6f157d5ffd784b8d202fc62eac8035a770b"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -692,10 +790,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "40eebddd2156ce1bb37b20bbe5151340a31828b1f2d22ba4141f3531710e38df"
 dependencies = [
  "convert_case",
- "proc-macro2",
- "quote",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
  "rustc_version 0.3.3",
- "syn",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -717,6 +815,37 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d3dd60d1080a57a05ab032377049e0591415d2b31afd7028356dbf3cc6dcb066"
 dependencies = [
  "generic-array",
+]
+
+[[package]]
+name = "digest"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b697d66081d42af4fba142d56918a3cb21dc8eb63372c6b85d14f44fb9c5979b"
+dependencies = [
+ "block-buffer 0.10.0",
+ "crypto-common",
+ "generic-array",
+]
+
+[[package]]
+name = "dirs"
+version = "4.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ca3aa72a6f96ea37bbc5aa912f6788242832f75369bdfdadcb0e38423f100059"
+dependencies = [
+ "dirs-sys",
+]
+
+[[package]]
+name = "dirs-sys"
+version = "0.3.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "03d86534ed367a67548dc68113a0f5db55432fdfbb6e6f9d77704397d95d5780"
+dependencies = [
+ "libc",
+ "redox_users",
+ "winapi",
 ]
 
 [[package]]
@@ -927,9 +1056,9 @@ version = "0.3.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a89f17b21645bc4ed773c69af9c9a0effd4a3f1a3876eadd453469f8854e7fdd"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -1042,9 +1171,9 @@ version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "915ef07c710d84733522461de2a734d4d62a3fd39a4d4f404c2f385ef8618d05"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -1117,7 +1246,7 @@ version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "01706d578d5c281058480e673ae4086a9f4710d8df1ad80a5b03e39ece5f886b"
 dependencies = [
- "digest",
+ "digest 0.9.0",
  "hmac",
 ]
 
@@ -1128,7 +1257,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2a2a2320eb7ec0ebe8da8f744d7812d9fc4cb4d09344ac01898dbcb6a20ae69b"
 dependencies = [
  "crypto-mac 0.11.1",
- "digest",
+ "digest 0.9.0",
 ]
 
 [[package]]
@@ -1251,10 +1380,10 @@ dependencies = [
  "i18n-embed",
  "lazy_static",
  "proc-macro-error",
- "proc-macro2",
- "quote",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
  "strsim 0.10.0",
- "syn",
+ "syn 1.0.82",
  "unic-langid",
 ]
 
@@ -1266,9 +1395,9 @@ checksum = "0db2330e035808eb064afb67e6743ddce353763af3e0f2bdfc2476e00ce76136"
 dependencies = [
  "find-crate",
  "i18n-config",
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -1317,6 +1446,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7a5bbe824c507c5da5956355e86a746d82e0e1464f65d862cc5e71da70e94b2c"
 dependencies = [
  "cfg-if",
+ "js-sys",
+ "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]
@@ -1347,9 +1479,9 @@ checksum = "68f2d64f2edebec4ce84ad108148e67e1064789bee435edc5b60ad398714a3a9"
 
 [[package]]
 name = "itertools"
-version = "0.10.1"
+version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "69ddb889f9d0d08a67338271fa9b62996bc788c7796a5c18cf057420aaed5eaf"
+checksum = "a9a9d19fa1e79b6215ff29b9d6880b706147f16e9b1dbb1e4e5947b5b02bc5e3"
 dependencies = [
  "either",
 ]
@@ -1654,9 +1786,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.8.0"
+version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "692fcb63b64b1758029e0a96ee63e049ce8c5948587f2f7208df04625e5f6b56"
+checksum = "da32515d9f6e6e489d7bc9d84c71b060db7247dc035bbe44eac88cf87486d8d5"
 
 [[package]]
 name = "oneshot"
@@ -1744,6 +1876,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "paste"
+version = "1.0.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0744126afe1a6dd7f394cb50a716dbe086cb06e255e53d8d0185d82828358fb5"
+
+[[package]]
 name = "pbkdf2"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1786,14 +1924,13 @@ dependencies = [
  "rusty-hook",
  "serde",
  "setup-utils",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-ledger",
- "snarkvm-marlin 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-polycommit 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-algorithms",
+ "snarkvm-curves",
+ "snarkvm-fields",
+ "snarkvm-marlin",
+ "snarkvm-polycommit",
+ "snarkvm-r1cs",
+ "snarkvm-utilities",
  "tracing",
 ]
 
@@ -1809,7 +1946,7 @@ dependencies = [
  "rand 0.8.4",
  "rustc_version 0.4.0",
  "setup-utils",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-curves",
  "tracing",
  "tracing-subscriber",
  "wasm-bindgen-test",
@@ -1836,7 +1973,7 @@ dependencies = [
  "serde_with",
  "serial_test",
  "setup-utils",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-curves",
  "thiserror",
  "time 0.3.5",
  "tokio",
@@ -1870,10 +2007,10 @@ dependencies = [
  "serde_json",
  "setup-utils",
  "setup1-shared",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-dpc 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
+ "snarkvm-curves",
+ "snarkvm-dpc",
+ "snarkvm-fields",
+ "snarkvm-utilities",
  "tracing",
  "tracing-subscriber",
  "wasm-bindgen",
@@ -1890,7 +2027,7 @@ dependencies = [
  "getrandom 0.2.3",
  "hex",
  "rand 0.8.4",
- "snarkvm-dpc 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
+ "snarkvm-dpc",
  "wasm-bindgen",
 ]
 
@@ -1911,11 +2048,11 @@ dependencies = [
  "rayon",
  "rusty-hook",
  "setup-utils",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-algorithms",
+ "snarkvm-curves",
+ "snarkvm-fields",
+ "snarkvm-r1cs",
+ "snarkvm-utilities",
  "tracing",
  "tracing-subscriber",
  "wasm-bindgen",
@@ -1938,9 +2075,9 @@ version = "1.0.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6e8fe8163d14ce7f0cdac2e040116f22eac817edabff0be91e8aff7e9accf389"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -2036,9 +2173,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "da25490ff9892aab3fcf7c36f08cfb902dd3e71ca0f9f9517bea02a73a5ce38c"
 dependencies = [
  "proc-macro-error-attr",
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
  "version_check",
 ]
 
@@ -2048,9 +2185,18 @@ version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a1be40180e52ecc98ad80b184934baf3d0d29f979574e439af5a55274b35f869"
 dependencies = [
- "proc-macro2",
- "quote",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
  "version_check",
+]
+
+[[package]]
+name = "proc-macro2"
+version = "0.4.30"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cf3d2011ab5c909338f7887f4fc896d35932e29146c12c8d01da6b22a80ba759"
+dependencies = [
+ "unicode-xid 0.1.0",
 ]
 
 [[package]]
@@ -2059,7 +2205,16 @@ version = "1.0.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba508cc11742c0dc5c1659771673afbab7a0efab23aa17e854cbab0837ed0b43"
 dependencies = [
- "unicode-xid",
+ "unicode-xid 0.2.2",
+]
+
+[[package]]
+name = "quote"
+version = "0.6.13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6ce23b6b870e8f94f81fb0a363d65d86675884b34a09043c81e5562f11c1f8e1"
+dependencies = [
+ "proc-macro2 0.4.30",
 ]
 
 [[package]]
@@ -2068,7 +2223,7 @@ version = "1.0.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "38bc8cc6a5f2e3655e0899c1b848643b2562f853f114bfec7be120678e3ace05"
 dependencies = [
- "proc-macro2",
+ "proc-macro2 1.0.32",
 ]
 
 [[package]]
@@ -2196,6 +2351,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "redox_users"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "528532f3d801c87aec9def2add9ca802fe569e44a544afe633765267840abe64"
+dependencies = [
+ "getrandom 0.2.3",
+ "redox_syscall",
+]
+
+[[package]]
 name = "regex"
 version = "1.5.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2292,10 +2457,10 @@ version = "6.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f567ca01565c50c67b29e535f5f67b8ea8aeadaeed16a88f10792ab57438b957"
 dependencies = [
- "proc-macro2",
- "quote",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
  "rust-embed-utils",
- "syn",
+ "syn 1.0.82",
  "walkdir",
 ]
 
@@ -2305,7 +2470,7 @@ version = "7.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6116e7ab9ea963f60f2f20291d8fcf6c7273192cdd7273b3c80729a9605c97b2"
 dependencies = [
- "sha2",
+ "sha2 0.9.8",
  "walkdir",
 ]
 
@@ -2406,7 +2571,7 @@ dependencies = [
  "hmac",
  "pbkdf2",
  "salsa20",
- "sha2",
+ "sha2 0.9.8",
 ]
 
 [[package]]
@@ -2473,9 +2638,9 @@ dependencies = [
 
 [[package]]
 name = "serde"
-version = "1.0.130"
+version = "1.0.133"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f12d06de37cf59146fbdecab66aa99f9fe4f78722e3607577a5375d66bd0c913"
+checksum = "97565067517b60e2d1ea8b268e59ce036de907ac523ad83a0475da04e818989a"
 dependencies = [
  "serde_derive",
 ]
@@ -2509,9 +2674,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "692563b61324ae1568e2884c7a6385ab4b95f13063fd31a6b702d5cbc5c456df"
 dependencies = [
  "darling 0.10.2",
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -2526,13 +2691,13 @@ dependencies = [
 
 [[package]]
 name = "serde_derive"
-version = "1.0.130"
+version = "1.0.133"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d7bc1a1ab1961464eae040d96713baa5a724a8152c1222492465b54322ec508b"
+checksum = "ed201699328568d8d08208fdd080e3ff594e6c422e438b6705905da01005d537"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -2576,9 +2741,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "12e47be9471c72889ebafb5e14d5ff930d89ae7a67bbdb5f8abb564f845a927e"
 dependencies = [
  "darling 0.13.0",
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -2598,9 +2763,9 @@ version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b2acd6defeddb41eb60bb468f8825d0cfd0c2a76bc03bfd235b6a1dc4f6a1ad5"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -2608,7 +2773,7 @@ name = "setup-utils"
 version = "0.3.0"
 dependencies = [
  "blake2",
- "blake2s_simd",
+ "blake2s_simd 0.5.11",
  "cfg-if",
  "criterion",
  "crossbeam",
@@ -2622,12 +2787,12 @@ dependencies = [
  "rayon",
  "rusty-hook",
  "serde",
- "sha2",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "sha2 0.9.8",
+ "snarkvm-algorithms",
+ "snarkvm-curves",
+ "snarkvm-fields",
+ "snarkvm-r1cs",
+ "snarkvm-utilities",
  "thiserror",
  "tracing",
 ]
@@ -2643,7 +2808,7 @@ dependencies = [
  "secrecy",
  "serde",
  "serde_json",
- "snarkvm-dpc 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-dpc",
  "structopt",
  "unic-langid",
 ]
@@ -2678,9 +2843,9 @@ dependencies = [
  "serial_test",
  "setup-utils",
  "setup1-shared",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-dpc 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-curves",
+ "snarkvm-dpc",
+ "snarkvm-utilities",
  "structopt",
  "thiserror",
  "tokio",
@@ -2700,7 +2865,7 @@ dependencies = [
  "serde",
  "serde_json",
  "setup-utils",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-curves",
  "tokio",
 ]
 
@@ -2724,10 +2889,10 @@ dependencies = [
  "serde_json",
  "setup-utils",
  "setup1-shared",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-dpc 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-algorithms",
+ "snarkvm-curves",
+ "snarkvm-dpc",
+ "snarkvm-utilities",
  "structopt",
  "thiserror",
  "tokio",
@@ -2750,15 +2915,17 @@ dependencies = [
  "phase2",
  "rand 0.8.4",
  "rand_chacha 0.3.1",
+ "serde",
  "setup-utils",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-dpc 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-parameters 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-algorithms",
+ "snarkvm-curves",
+ "snarkvm-dpc",
+ "snarkvm-fields",
+ "snarkvm-parameters",
+ "snarkvm-r1cs",
+ "snarkvm-utilities",
  "thiserror",
+ "tracing",
  "tracing-subscriber",
 ]
 
@@ -2768,10 +2935,10 @@ version = "0.9.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "99cd6713db3cf16b6c84e06321e049a9b9f699826e16096d23bbcc44d15d51a6"
 dependencies = [
- "block-buffer",
+ "block-buffer 0.9.0",
  "cfg-if",
  "cpufeatures",
- "digest",
+ "digest 0.9.0",
  "opaque-debug",
 ]
 
@@ -2781,11 +2948,22 @@ version = "0.9.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b69f9a4c9740d74c5baa3fd2e547f9525fa8088a8a958e0ca2409a514e33f5fa"
 dependencies = [
- "block-buffer",
+ "block-buffer 0.9.0",
  "cfg-if",
  "cpufeatures",
- "digest",
+ "digest 0.9.0",
  "opaque-debug",
+]
+
+[[package]]
+name = "sha2"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "900d964dd36bb15bcf2f2b35694c072feab74969a54f2bbeec7a2d725d2bdcb6"
+dependencies = [
+ "cfg-if",
+ "cpufeatures",
+ "digest 0.10.1",
 ]
 
 [[package]]
@@ -2821,436 +2999,220 @@ checksum = "1ecab6c735a6bb4139c0caafd0cc3635748bbb3acf4550e8138122099251f309"
 [[package]]
 name = "snarkvm-algorithms"
 version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm#137b57a3bc0a3a5f3e8e8e8300f748990a77bdeb"
+source = "git+https://github.com/AleoHQ/snarkVM.git?rev=092dfd2#092dfd2ae726339e1404ae3e3ce82a18d52f3114"
 dependencies = [
  "anyhow",
  "blake2",
- "blake2s_simd",
+ "blake2s_simd 1.0.0",
  "crossbeam-channel",
  "derivative",
- "digest",
+ "digest 0.9.0",
+ "getrandom 0.2.3",
+ "hex",
  "itertools",
  "lazy_static",
  "once_cell",
  "rand 0.8.4",
  "rand_chacha 0.3.1",
  "rayon",
- "sha2",
+ "serde",
+ "sha2 0.10.0",
  "smallvec",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-profiler 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "thiserror",
-]
-
-[[package]]
-name = "snarkvm-algorithms"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c#fc997c3e99ecc42d30e31302b4550001ccf86f5a"
-dependencies = [
- "anyhow",
- "blake2",
- "blake2s_simd",
- "crossbeam-channel",
- "derivative",
- "digest",
- "itertools",
- "lazy_static",
- "once_cell",
- "rand 0.8.4",
- "rand_chacha 0.3.1",
- "rayon",
- "sha2",
- "smallvec",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-profiler 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-curves",
+ "snarkvm-fields",
+ "snarkvm-profiler",
+ "snarkvm-r1cs",
+ "snarkvm-utilities",
  "thiserror",
 ]
 
 [[package]]
 name = "snarkvm-curves"
 version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm#137b57a3bc0a3a5f3e8e8e8300f748990a77bdeb"
+source = "git+https://github.com/AleoHQ/snarkVM.git?rev=092dfd2#092dfd2ae726339e1404ae3e3ce82a18d52f3114"
 dependencies = [
  "derivative",
  "rand 0.8.4",
- "rand_xorshift",
  "rustc_version 0.4.0",
  "serde",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "thiserror",
-]
-
-[[package]]
-name = "snarkvm-curves"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c#fc997c3e99ecc42d30e31302b4550001ccf86f5a"
-dependencies = [
- "derivative",
- "rand 0.8.4",
- "rand_xorshift",
- "rustc_version 0.4.0",
- "serde",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-fields",
+ "snarkvm-utilities",
  "thiserror",
 ]
 
 [[package]]
 name = "snarkvm-derives"
 version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm#137b57a3bc0a3a5f3e8e8e8300f748990a77bdeb"
+source = "git+https://github.com/AleoHQ/snarkVM.git?rev=092dfd2#092dfd2ae726339e1404ae3e3ce82a18d52f3114"
 dependencies = [
  "proc-macro-crate",
  "proc-macro-error",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "snarkvm-derives"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c#fc997c3e99ecc42d30e31302b4550001ccf86f5a"
-dependencies = [
- "proc-macro-crate",
- "proc-macro-error",
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
 name = "snarkvm-dpc"
 version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm#137b57a3bc0a3a5f3e8e8e8300f748990a77bdeb"
+source = "git+https://github.com/AleoHQ/snarkVM.git?rev=092dfd2#092dfd2ae726339e1404ae3e3ce82a18d52f3114"
 dependencies = [
  "anyhow",
  "base58",
  "bech32",
- "bincode",
- "blake2",
- "derivative",
- "hex",
- "itertools",
- "once_cell",
- "rand 0.8.4",
- "serde",
- "sha2",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-gadgets 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-marlin 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-parameters 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-polycommit 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-profiler 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "thiserror",
-]
-
-[[package]]
-name = "snarkvm-dpc"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c#fc997c3e99ecc42d30e31302b4550001ccf86f5a"
-dependencies = [
- "anyhow",
- "base58",
- "bech32",
- "bincode",
- "blake2",
- "derivative",
- "hex",
- "itertools",
- "once_cell",
- "rand 0.8.4",
- "serde",
- "sha2",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-gadgets 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-marlin 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-parameters 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-polycommit 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-profiler 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "thiserror",
-]
-
-[[package]]
-name = "snarkvm-fields"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm#137b57a3bc0a3a5f3e8e8e8300f748990a77bdeb"
-dependencies = [
- "anyhow",
- "bincode",
- "derivative",
- "rand 0.8.4",
- "rand_xorshift",
- "serde",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "thiserror",
-]
-
-[[package]]
-name = "snarkvm-fields"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c#fc997c3e99ecc42d30e31302b4550001ccf86f5a"
-dependencies = [
- "anyhow",
- "bincode",
- "derivative",
- "rand 0.8.4",
- "rand_xorshift",
- "serde",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "thiserror",
-]
-
-[[package]]
-name = "snarkvm-gadgets"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm#137b57a3bc0a3a5f3e8e8e8300f748990a77bdeb"
-dependencies = [
- "derivative",
- "digest",
- "itertools",
- "num-bigint",
- "num-integer",
- "num-traits",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "thiserror",
-]
-
-[[package]]
-name = "snarkvm-gadgets"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c#fc997c3e99ecc42d30e31302b4550001ccf86f5a"
-dependencies = [
- "derivative",
- "digest",
- "itertools",
- "num-bigint",
- "num-integer",
- "num-traits",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "thiserror",
-]
-
-[[package]]
-name = "snarkvm-ledger"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c#fc997c3e99ecc42d30e31302b4550001ccf86f5a"
-dependencies = [
- "anyhow",
  "bincode",
  "blake2",
  "chrono",
+ "derivative",
  "hex",
+ "itertools",
  "once_cell",
- "parking_lot",
+ "rand 0.8.4",
+ "rayon",
+ "serde",
+ "serde_json",
+ "snarkvm-algorithms",
+ "snarkvm-curves",
+ "snarkvm-fields",
+ "snarkvm-gadgets",
+ "snarkvm-marlin",
+ "snarkvm-parameters",
+ "snarkvm-polycommit",
+ "snarkvm-profiler",
+ "snarkvm-r1cs",
+ "snarkvm-utilities",
+ "thiserror",
+]
+
+[[package]]
+name = "snarkvm-fields"
+version = "0.7.5"
+source = "git+https://github.com/AleoHQ/snarkVM.git?rev=092dfd2#092dfd2ae726339e1404ae3e3ce82a18d52f3114"
+dependencies = [
+ "anyhow",
+ "derivative",
  "rand 0.8.4",
  "serde",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-dpc 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-gadgets 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-marlin 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-parameters 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-polycommit 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-profiler 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-utilities",
+ "thiserror",
+]
+
+[[package]]
+name = "snarkvm-gadgets"
+version = "0.7.5"
+source = "git+https://github.com/AleoHQ/snarkVM.git?rev=092dfd2#092dfd2ae726339e1404ae3e3ce82a18d52f3114"
+dependencies = [
+ "anyhow",
+ "derivative",
+ "digest 0.9.0",
+ "itertools",
+ "num-bigint",
+ "num-integer",
+ "num-traits",
+ "snarkvm-algorithms",
+ "snarkvm-curves",
+ "snarkvm-fields",
+ "snarkvm-r1cs",
+ "snarkvm-utilities",
  "thiserror",
 ]
 
 [[package]]
 name = "snarkvm-marlin"
 version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm#137b57a3bc0a3a5f3e8e8e8300f748990a77bdeb"
+source = "git+https://github.com/AleoHQ/snarkVM.git?rev=092dfd2#092dfd2ae726339e1404ae3e3ce82a18d52f3114"
 dependencies = [
+ "bincode",
  "blake2",
  "derivative",
- "digest",
- "hashbrown",
- "rand 0.8.4",
- "rand_chacha 0.3.1",
- "rand_core 0.6.3",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-gadgets 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-polycommit 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-profiler 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
-]
-
-[[package]]
-name = "snarkvm-marlin"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c#fc997c3e99ecc42d30e31302b4550001ccf86f5a"
-dependencies = [
- "blake2",
- "derivative",
- "digest",
+ "digest 0.9.0",
  "hashbrown",
  "rand 0.8.4",
  "rand_chacha 0.3.1",
  "rand_core 0.6.3",
  "rayon",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-gadgets 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-polycommit 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-profiler 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "serde",
+ "smallvec",
+ "snarkvm-algorithms",
+ "snarkvm-curves",
+ "snarkvm-fields",
+ "snarkvm-gadgets",
+ "snarkvm-polycommit",
+ "snarkvm-profiler",
+ "snarkvm-r1cs",
+ "snarkvm-utilities",
 ]
 
 [[package]]
 name = "snarkvm-parameters"
 version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm#137b57a3bc0a3a5f3e8e8e8300f748990a77bdeb"
+source = "git+https://github.com/AleoHQ/snarkVM.git?rev=092dfd2#092dfd2ae726339e1404ae3e3ce82a18d52f3114"
 dependencies = [
- "hex",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "thiserror",
-]
-
-[[package]]
-name = "snarkvm-parameters"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c#fc997c3e99ecc42d30e31302b4550001ccf86f5a"
-dependencies = [
+ "aleo-std",
+ "anyhow",
+ "cfg-if",
  "curl",
  "hex",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "parking_lot",
+ "paste",
+ "reqwest",
+ "serde_json",
+ "snarkvm-algorithms",
+ "snarkvm-utilities",
  "thiserror",
+ "wasm-bindgen-futures",
 ]
 
 [[package]]
 name = "snarkvm-polycommit"
 version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm#137b57a3bc0a3a5f3e8e8e8300f748990a77bdeb"
+source = "git+https://github.com/AleoHQ/snarkVM.git?rev=092dfd2#092dfd2ae726339e1404ae3e3ce82a18d52f3114"
 dependencies = [
  "derivative",
- "digest",
+ "digest 0.9.0",
  "hashbrown",
  "rand_core 0.6.3",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-gadgets 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-profiler 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
-]
-
-[[package]]
-name = "snarkvm-polycommit"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c#fc997c3e99ecc42d30e31302b4550001ccf86f5a"
-dependencies = [
- "derivative",
- "digest",
- "hashbrown",
- "rand_core 0.6.3",
- "snarkvm-algorithms 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-gadgets 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-profiler 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-r1cs 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-algorithms",
+ "snarkvm-curves",
+ "snarkvm-fields",
+ "snarkvm-gadgets",
+ "snarkvm-profiler",
+ "snarkvm-r1cs",
+ "snarkvm-utilities",
 ]
 
 [[package]]
 name = "snarkvm-profiler"
 version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm#137b57a3bc0a3a5f3e8e8e8300f748990a77bdeb"
-
-[[package]]
-name = "snarkvm-profiler"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c#fc997c3e99ecc42d30e31302b4550001ccf86f5a"
+source = "git+https://github.com/AleoHQ/snarkVM.git?rev=092dfd2#092dfd2ae726339e1404ae3e3ce82a18d52f3114"
 
 [[package]]
 name = "snarkvm-r1cs"
 version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm#137b57a3bc0a3a5f3e8e8e8300f748990a77bdeb"
+source = "git+https://github.com/AleoHQ/snarkVM.git?rev=092dfd2#092dfd2ae726339e1404ae3e3ce82a18d52f3114"
 dependencies = [
  "anyhow",
  "cfg-if",
  "fxhash",
  "indexmap",
  "itertools",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "thiserror",
-]
-
-[[package]]
-name = "snarkvm-r1cs"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c#fc997c3e99ecc42d30e31302b4550001ccf86f5a"
-dependencies = [
- "anyhow",
- "cfg-if",
- "fxhash",
- "indexmap",
- "itertools",
- "snarkvm-curves 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-fields 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
- "snarkvm-utilities 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "snarkvm-curves",
+ "snarkvm-fields",
+ "snarkvm-utilities",
  "thiserror",
 ]
 
 [[package]]
 name = "snarkvm-utilities"
 version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm#137b57a3bc0a3a5f3e8e8e8300f748990a77bdeb"
+source = "git+https://github.com/AleoHQ/snarkVM.git?rev=092dfd2#092dfd2ae726339e1404ae3e3ce82a18d52f3114"
 dependencies = [
  "anyhow",
  "bincode",
  "num-bigint",
  "rand 0.8.4",
- "snarkvm-derives 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?branch=setup_wasm)",
- "thiserror",
-]
-
-[[package]]
-name = "snarkvm-utilities"
-version = "0.7.5"
-source = "git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c#fc997c3e99ecc42d30e31302b4550001ccf86f5a"
-dependencies = [
- "anyhow",
- "bincode",
- "num-bigint",
- "rand 0.8.4",
- "snarkvm-derives 0.7.5 (git+https://github.com/AleoHQ/snarkVM.git?rev=fc997c)",
+ "serde",
+ "snarkvm-derives",
  "thiserror",
 ]
 
@@ -3301,9 +3263,9 @@ checksum = "dcb5ae327f9cc13b68763b5749770cb9e048a99bd9dfdfa58d0cf05d5f64afe0"
 dependencies = [
  "heck",
  "proc-macro-error",
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -3314,13 +3276,24 @@ checksum = "6bdef32e8150c2a081110b42772ffe7d7c9032b606bc226c8260fd97e0976601"
 
 [[package]]
 name = "syn"
+version = "0.15.44"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9ca4b3b69a77cbe1ffc9e198781b7acb0c7365a883670e8f1c1bc66fba79a5c5"
+dependencies = [
+ "proc-macro2 0.4.30",
+ "quote 0.6.13",
+ "unicode-xid 0.1.0",
+]
+
+[[package]]
+name = "syn"
 version = "1.0.82"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8daf5dd0bb60cbd4137b1b587d2fc0ae729bc07cf01cd70b36a1ed5ade3b9d59"
 dependencies = [
- "proc-macro2",
- "quote",
- "unicode-xid",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "unicode-xid 0.2.2",
 ]
 
 [[package]]
@@ -3329,10 +3302,10 @@ version = "0.12.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f36bdaa60a83aca3921b5259d5400cbf5e90fc51931376a9bd4a0eb79aa7210f"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn",
- "unicode-xid",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
+ "unicode-xid 0.2.2",
 ]
 
 [[package]]
@@ -3383,9 +3356,9 @@ version = "1.0.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aa32fd3f627f367fe16f893e2597ae3c05020f8bba2666a4e6ea73d377e5714b"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -3481,9 +3454,9 @@ version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c9efc1aba077437943f7515666aa2b882dfabfbfdf89c819ea75a8d6e9eaba5e"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -3569,9 +3542,9 @@ version = "0.1.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f4f480b8f81512e825f337ad51e94c1eb5d3bbdf2b363dcd01e2b19a9ffe3f8e"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
 ]
 
 [[package]]
@@ -3708,6 +3681,12 @@ checksum = "3ed742d4ea2bd1176e236172c8429aaf54486e7ac098db29ffe6529e0ce50973"
 
 [[package]]
 name = "unicode-xid"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fc72304796d0818e357ead4e000d19c9c174ab23dc11093ac919054d20a6a7fc"
+
+[[package]]
+name = "unicode-xid"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ccb82d61f80a663efe1f787a51b16b5a51e3314d6ac365b08639f52387b33f3"
@@ -3812,9 +3791,9 @@ dependencies = [
  "bumpalo",
  "lazy_static",
  "log",
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
  "wasm-bindgen-shared",
 ]
 
@@ -3836,7 +3815,7 @@ version = "0.2.78"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d56146e7c495528bf6587663bea13a8eb588d39b36b679d83972e1a2dbbdacf9"
 dependencies = [
- "quote",
+ "quote 1.0.10",
  "wasm-bindgen-macro-support",
 ]
 
@@ -3846,9 +3825,9 @@ version = "0.2.78"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7803e0eea25835f8abdc585cd3021b3deb11543c6fe226dcd30b228857c5c5ab"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
  "wasm-bindgen-backend",
  "wasm-bindgen-shared",
 ]
@@ -3879,8 +3858,8 @@ version = "0.3.28"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6006f79628dfeb96a86d4db51fbf1344cd7fd8408f06fc9aa3c84913a4789688"
 dependencies = [
- "proc-macro2",
- "quote",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
 ]
 
 [[package]]
@@ -3976,8 +3955,8 @@ version = "1.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "65f1a51723ec88c66d5d1fe80c841f17f63587d6691901d66be9bec6c3b51f73"
 dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "proc-macro2 1.0.32",
+ "quote 1.0.10",
+ "syn 1.0.82",
  "synstructure",
 ]

@@ -10,7 +10,7 @@ use setup1_shared::reliability::{
     CoordinatorMessageName,
     MAXIMUM_MESSAGE_SIZE,
 };
-use snarkvm_dpc::{parameters::testnet2::Testnet2Parameters, PrivateKey};
+use snarkvm_dpc::{testnet2::Testnet2, PrivateKey};
 use tokio_tungstenite::{
     connect_async_with_config,
     tungstenite::protocol::{Message, WebSocketConfig},
@@ -25,7 +25,7 @@ mod latency;
 
 /// Builds a request with authorization header to initialize
 /// a WebSocket handshake later
-fn prepare_request(api_url: &Url, api_path: &str, private_key: &PrivateKey<Testnet2Parameters>) -> Result<Request<()>> {
+fn prepare_request(api_url: &Url, api_path: &str, private_key: &PrivateKey<Testnet2>) -> Result<Request<()>> {
     let scheme = match api_url.scheme() {
         "http" => "ws",
         "https" => "wss",
@@ -47,7 +47,7 @@ fn prepare_request(api_url: &Url, api_path: &str, private_key: &PrivateKey<Testn
 
 /// Check reliability score before starting
 /// to contribute
-pub(crate) async fn check(api_base_url: &Url, private_key: &PrivateKey<Testnet2Parameters>) -> Result<()> {
+pub(crate) async fn check(api_base_url: &Url, private_key: &PrivateKey<Testnet2>) -> Result<()> {
     let api_path = "/v1/contributor/reliability";
     let request = prepare_request(api_base_url, api_path, private_key)?;
 

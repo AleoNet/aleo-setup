@@ -12,14 +12,14 @@ edition = "2018"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-http = "0.2"
-phase1 = { path = "../phase1", default-features = false }
+phase1 = { path = "../phase1" }
 setup-utils = { path = "../setup-utils", default-features = false }
 setup1-shared = { path = "../setup1-shared" }
-snarkvm-dpc = { git = "https://github.com/AleoHQ/snarkVM.git", branch = "setup_wasm", default-features = false, features = [ "wasm" ], optional = true }
-snarkvm-utilities = { git = "https://github.com/AleoHQ/snarkVM.git", branch = "setup_wasm", default-features = false, optional = true }
-snarkvm-curves = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c", default-features = false }
-snarkvm-fields = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c", default-features = false }
+snarkvm-curves = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2" }
+snarkvm-fields = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2" }
+http = "0.2"
+snarkvm-dpc = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2", default-features = false, features = [ "wasm" ], optional = true }
+snarkvm-utilities = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2", default-features = false, optional = true }
 
 blake2 = { version = "0.9", default-features = false }
 bytes = "1.1"

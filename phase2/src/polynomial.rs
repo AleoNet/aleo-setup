@@ -1,6 +1,7 @@
 use snarkvm_curves::{AffineCurve, PairingEngine, ProjectiveCurve};
-use snarkvm_fields::Zero;
+use snarkvm_fields::{PrimeField, Zero};
 use snarkvm_r1cs::Index;
+use snarkvm_utilities::BitIteratorBE;
 
 use rayon::prelude::*;
 
@@ -90,20 +91,39 @@ fn dot_product_vec<C: AffineCurve>(
 /// `coeffs` vector offset by `num_inputs`
 #[allow(clippy::redundant_closure)]
 fn dot_product<C: AffineCurve>(input: &[(C::ScalarField, Index)], coeffs: &[C], num_inputs: usize) -> C::Projective {
-    input
-        .into_par_iter()
-        .fold(
-            || C::Projective::zero(),
-            |mut sum, &(coeff, lag)| {
-                let ind = match lag {
+    if input.len() > 10 {
+        let mut input = input
+            .par_iter()
+            .map(|(coeff, lag)| {
+                let ind = match *lag {
                     Index::Public(i) => i,
                     Index::Private(i) => num_inputs + i,
                 };
-                sum += coeffs[ind].mul(coeff).into_projective();
-                sum
-            },
-        )
-        .reduce(|| C::Projective::zero(), |a, b| a + b)
+                (coeff, ind)
+            })
+            .collect::<Vec<_>>();
+        input.sort_unstable_by(|a, b| a.1.cmp(&b.1));
+        let input = input
+            .into_par_iter()
+            .map(|(coeff, _)| coeff.to_repr())
+            .collect::<Vec<_>>();
+        snarkvm_algorithms::msm::variable_base::VariableBaseMSM::multi_scalar_mul(coeffs, &input)
+    } else {
+        input
+            .into_par_iter()
+            .fold(
+                || C::Projective::zero(),
+                |sum, &(coeff, lag)| {
+                    let ind = match lag {
+                        Index::Public(i) => i,
+                        Index::Private(i) => num_inputs + i,
+                    };
+                    let coeff = BitIteratorBE::new(coeff.to_repr());
+                    sum + coeffs[ind].mul_bits(coeff)
+                },
+            )
+            .reduce(|| C::Projective::zero(), |a, b| a + b)
+    }
 }
 
 #[cfg(test)]

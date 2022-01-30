@@ -175,15 +175,20 @@ impl<E: PairingEngine> Groth16Params<E> {
 
         let mut reader = std::io::Cursor::new(reader);
         let alpha_g1 = reader.read_element(compressed, check_input_for_correctness)?;
+        debug!("Read alpha_g1");
         let beta_g1 = reader.read_element(compressed, check_input_for_correctness)?;
+        debug!("Read beta_g1");
         let beta_g2 = reader.read_element(compressed, check_input_for_correctness)?;
+        debug!("Read beta_g2");
 
         let position = reader.position() as usize;
-        let reader = &mut &reader.get_mut()[position..];
+        let reader = &reader.get_mut()[position..];
+        debug!("Truncated reader");
 
         // Split the transcript in the appropriate sections
         let (in_coeffs_g1, in_coeffs_g2, in_alpha_coeffs_g1, in_beta_coeffs_g1, in_h_g1) =
             split_transcript::<E>(reader, phase1_size, num_constraints, compressed);
+        debug!("Split transcript");
 
         info!("reading groth16 parameters...");
         // Read all elements in parallel
@@ -245,18 +250,23 @@ fn split_transcript<E: PairingEngine>(
     // N elements per coefficient
     let (coeffs_g1, others) = input.split_at(g1_size * size);
     let (_, others) = others.split_at((phase1_size - size) * g1_size);
+    debug!("Split coeffs_g1");
 
     let (coeffs_g2, others) = others.split_at(g2_size * size);
     let (_, others) = others.split_at((phase1_size - size) * g2_size);
+    debug!("Split coeffs_g2");
 
     let (alpha_coeffs_g1, others) = others.split_at(g1_size * size);
     let (_, others) = others.split_at((phase1_size - size) * g1_size);
+    debug!("Split alpha_coeffs_g1");
 
     let (beta_coeffs_g1, others) = others.split_at(g1_size * size);
     let (_, others) = others.split_at((phase1_size - size) * g1_size);
+    debug!("Split beta_coeffs_g1");
 
     // N-1 for the h coeffs
     let (h_coeffs, _) = others.split_at(g1_size * (size - 1));
+    debug!("Split h_coeffs");
 
     (coeffs_g1, coeffs_g2, alpha_coeffs_g1, beta_coeffs_g1, h_coeffs)
 }

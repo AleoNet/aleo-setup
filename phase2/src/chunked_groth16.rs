@@ -383,7 +383,7 @@ fn mul_query<C: AffineCurve, B: Read + Write + Seek>(
     num_els: usize,
 ) -> Result<()> {
     let mut query = (0..num_els)
-        .map(|_| C::deserialize(buffer))
+        .map(|_| CanonicalDeserialize::deserialize(buffer))
         .collect::<std::result::Result<Vec<_>, _>>()?; // why can't we use the aliased error type here?
 
     batch_mul(&mut query, element)?;
@@ -392,7 +392,7 @@ fn mul_query<C: AffineCurve, B: Read + Write + Seek>(
     buffer.seek(SeekFrom::Current(((num_els * C::SERIALIZED_SIZE) as i64).neg()))?;
     query
         .iter()
-        .map(|el| el.serialize(buffer))
+        .map(|el: &C| CanonicalSerialize::serialize(el, buffer))
         .collect::<std::result::Result<Vec<_>, _>>()?;
 
     Ok(())
@@ -493,10 +493,10 @@ fn read_batch<C: AffineCurve, B: Read + Write + Seek>(
     batch_size: usize,
 ) -> Result<(Vec<C>, Vec<C>)> {
     let els_before = (0..batch_size)
-        .map(|_| C::deserialize(before))
+        .map(|_| CanonicalDeserialize::deserialize(before))
         .collect::<std::result::Result<Vec<_>, _>>()?;
     let els_after = (0..batch_size)
-        .map(|_| C::deserialize(after))
+        .map(|_| CanonicalDeserialize::deserialize(after))
         .collect::<std::result::Result<Vec<_>, _>>()?;
     Ok((els_before, els_after))
 }

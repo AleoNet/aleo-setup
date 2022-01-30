@@ -6,7 +6,7 @@ use phase1::{
 };
 use setup_utils::*;
 
-use zexe_algebra::Bls12_377;
+use snarkvm_curves::bls12_377::Bls12_377;
 
 use criterion::{criterion_group, criterion_main, Criterion, Throughput};
 use rand::thread_rng;
@@ -15,8 +15,8 @@ use rand::thread_rng;
 // Parallel generation is strictly better
 fn benchmark_initialization(c: &mut Criterion) {
     // Iterate over all combinations of the following parameters
-    let compressions = &[UseCompression::Yes, UseCompression::No];
-    let proving_system = &[ProvingSystem::Groth16, ProvingSystem::Marlin];
+    let compressions = [UseCompression::Yes, UseCompression::No];
+    let proving_system = [ProvingSystem::Groth16, ProvingSystem::Marlin];
 
     let mut group = c.benchmark_group("initialization");
 
@@ -29,13 +29,13 @@ fn benchmark_initialization(c: &mut Criterion) {
                 }
 
                 let parameters = Phase1Parameters::<Bls12_377>::new_full(proof_system, power, power);
-                let expected_challenge_length = parameters.get_length(*compression);
+                let expected_challenge_length = parameters.get_length(compression);
 
                 // count in `other` powers (G1 will be 2x that)
                 group.throughput(Throughput::Elements(power as u64));
-                group.bench_with_input(format!("{}", compression), &power, |b, _power| {
+                group.bench_with_input(format!("{:?}_{}", proof_system, compression), &power, |b, _power| {
                     let mut output = vec![0; expected_challenge_length];
-                    b.iter(|| Phase1::initialization(&mut output, *compression, &parameters))
+                    b.iter(|| Phase1::initialization(&mut output, compression, &parameters))
                 });
             }
         }
@@ -58,7 +58,7 @@ fn benchmark_computation(c: &mut Criterion) {
     // We gather data on various sizes.
     for power in 4..8 {
         for proof_system in proving_system {
-            let parameters = Phase1Parameters::<Bls12_377>::new_full(proof_system, power, batch);
+            let parameters = Phase1Parameters::<Bls12_377>::new_full(*proof_system, power, batch);
 
             let (input, _) = generate_input(&parameters, compressed_input, correctness);
             let mut output = vec![0; parameters.get_length(compressed_output)];
@@ -71,7 +71,7 @@ fn benchmark_computation(c: &mut Criterion) {
 
             group.throughput(Throughput::Elements(power as u64));
             group.bench_with_input(
-                format!("{}_{}", compressed_input, compressed_output),
+                format!("{:?}_{}_{}", proof_system, compressed_input, compressed_output),
                 &power,
                 |b, _size| {
                     b.iter(|| {
@@ -116,7 +116,7 @@ fn benchmark_verification(c: &mut Criterion) {
     for power in powers {
         for (compressed_input, compressed_output) in compression {
             for proof_system in proving_system {
-                let parameters = Phase1Parameters::<Bls12_377>::new_full(proof_system, power, batch);
+                let parameters = Phase1Parameters::<Bls12_377>::new_full(*proof_system, power, batch);
 
                 let (input, output, pubkey, current_accumulator_hash) =
                     setup_verify(*compressed_input, correctness, *compressed_output, &parameters);

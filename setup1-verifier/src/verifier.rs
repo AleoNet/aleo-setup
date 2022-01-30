@@ -14,7 +14,7 @@ use phase1_coordinator::{
 };
 use setup_utils::calculate_hash;
 use snarkvm_curves::{bls12_377::Bls12_377, bw6_761::BW6_761};
-use snarkvm_dpc::{parameters::testnet2::Testnet2Parameters, Address, ViewKey};
+use snarkvm_dpc::{testnet2::Testnet2, Address, PrivateKey};
 
 use serde::{Deserialize, Serialize};
 use tracing::{debug, error, info};
@@ -61,7 +61,7 @@ pub struct Verifier {
     pub(crate) coordinator_api_url: Url,
 
     /// The view key that will be used for server authentication
-    pub(crate) view_key: ViewKey<Testnet2Parameters>,
+    pub(crate) private_key: PrivateKey<Testnet2>,
 
     /// The identity of the verifier
     pub(crate) verifier: Participant,
@@ -70,13 +70,14 @@ pub struct Verifier {
     pub(crate) environment: Environment,
 }
 
-// Manual implementation, since ViewKey doesn't implement Clone
+// Manual implementation, since PrivateKey doesn't implement Clone
 impl Clone for Verifier {
     fn clone(&self) -> Self {
-        let view_key = ViewKey::from_str(&self.view_key.to_string()).expect("Error cloning the verifier ViewKey");
+        let private_key =
+            PrivateKey::from_str(&self.private_key.to_string()).expect("Error cloning the verifier PrivateKey");
         Self {
             coordinator_api_url: self.coordinator_api_url.clone(),
-            view_key,
+            private_key,
             verifier: self.verifier.clone(),
             environment: self.environment.clone(),
         }
@@ -89,15 +90,15 @@ impl Verifier {
     ///
     pub fn new(
         coordinator_api_url: Url,
-        view_key: ViewKey<Testnet2Parameters>,
-        address: Address<Testnet2Parameters>,
+        private_key: PrivateKey<Testnet2>,
+        address: Address<Testnet2>,
         environment: Environment,
     ) -> Result<Self, VerifierError> {
         let verifier_id = address.to_string();
 
         Ok(Self {
             coordinator_api_url,
-            view_key,
+            private_key,
             verifier: Participant::Verifier(verifier_id),
             environment,
         })
@@ -267,7 +268,7 @@ impl Verifier {
         let contribution_state = ContributionState::new(challenge_hash, response_hash, Some(next_challenge_hash));
         let message = contribution_state.signature_message()?;
 
-        let signature = AleoAuthentication::sign(&self.view_key, message)?;
+        let signature = AleoAuthentication::sign(&self.private_key, message)?;
 
         let contribution_file_signature = ContributionFileSignature::new(signature, contribution_state)?;
 
@@ -409,7 +410,7 @@ impl Verifier {
         // It's better to panic here and stop the verifier, because
         // such an error is unexpected and signals about
         // logic errors in authentication
-        let authentication = AleoAuthentication::authenticate(&self.view_key, &method, &path).expect(&format!(
+        let authentication = AleoAuthentication::authenticate(&self.private_key, &method, &path).expect(&format!(
             "Failed to authenticate with method: {}, path: {}",
             method, path
         ));
@@ -462,7 +463,7 @@ mod tests {
     use rand_xorshift::XorShiftRng;
     use std::str::FromStr;
 
-    const TEST_VIEW_KEY: &str = "AViewKey1cWY7CaSDuwAEXoFki7Z1JELj7ksum8JxfZGpsPLHJACx";
+    const TEST_VIEW_KEY: &str = "APrivateKey1cWY7CaSDuwAEXoFki7Z1JELj7ksum8JxfZGpsPLHJACx";
 
     pub fn test_verifier() -> Verifier {
         let environment: Testing = Testing::from(Parameters::TestCustom {
@@ -471,12 +472,12 @@ mod tests {
             batch_size: 512,
         });
 
-        let view_key = ViewKey::from_str(TEST_VIEW_KEY).expect("Invalid view key");
-        let address = Address::from_view_key(&view_key).expect("Address not derived correctly");
+        let private_key = PrivateKey::from_str(TEST_VIEW_KEY).expect("Invalid view key");
+        let address = Address::from_private_key(&private_key);
 
         Verifier::new(
             Url::from_str("http://test_coordinator_url").unwrap(),
-            view_key,
+            private_key,
             address,
             environment.into(),
         )
@@ -535,7 +536,7 @@ mod tests {
         let message = contribution_state.signature_message().unwrap();
 
         // Derive the verifier address
-        let address = Address::from_view_key(&verifier.view_key).unwrap();
+        let address = Address::from_private_key(&verifier.private_key);
 
         // Check that the signature verifies
         assert!(AleoAuthentication::verify(&address, signature, message).unwrap())

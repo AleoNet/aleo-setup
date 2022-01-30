@@ -13,7 +13,7 @@ name = "view-key"
 path = "src/view_key.rs"
 
 [dependencies]
-snarkvm-dpc = { git = "https://github.com/AleoHQ/snarkVM", rev = "fc997c" }
+snarkvm-dpc = { git = "https://github.com/AleoHQ/snarkVM", rev = "092dfd2" }
 
 anyhow = "1.0.38"
 age = { version = "0.7", features = ["cli-common", "armor", "plugin"] }

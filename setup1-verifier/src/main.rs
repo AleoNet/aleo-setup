@@ -2,7 +2,7 @@ use std::{path::PathBuf, str::FromStr};
 
 use phase1_coordinator::environment::{Development, Environment, Parameters, Production};
 use setup1_shared::structures::{PublicSettings, SetupKind};
-use snarkvm_dpc::{parameters::testnet2::Testnet2Parameters, Address, ViewKey};
+use snarkvm_dpc::{testnet2::Testnet2, Address, PrivateKey};
 use structopt::StructOpt;
 use tracing::info;
 use url::Url;
@@ -38,8 +38,8 @@ fn universal() -> Environment {
 #[derive(Debug, StructOpt)]
 #[structopt(name = "Aleo setup verifier")]
 struct Options {
-    #[structopt(long, help = "Path to a file containing verifier view key")]
-    view_key: PathBuf,
+    #[structopt(long, help = "Path to a file containing verifier private key")]
+    private_key: PathBuf,
     #[structopt(long, help = "Coordinator api url, for example http://localhost:9000")]
     api_url: Url,
 }
@@ -75,14 +75,14 @@ async fn main() {
         SetupKind::Universal => universal(),
     };
 
-    let raw_view_key = std::fs::read_to_string(options.view_key).expect("View key not found");
-    let view_key = ViewKey::<Testnet2Parameters>::from_str(&raw_view_key).expect("Invalid view key");
-    let address = Address::from_view_key(&view_key).expect("Address not derived correctly");
+    let raw_private_key = std::fs::read_to_string(options.private_key).expect("View key not found");
+    let private_key = PrivateKey::<Testnet2>::from_str(&raw_private_key).expect("Invalid view key");
+    let address = Address::from_private_key(&private_key);
 
     // Initialize the verifier
     info!("Initializing verifier...");
-    let verifier =
-        Verifier::new(options.api_url.clone(), view_key, address, environment).expect("Failed to initialize verifier");
+    let verifier = Verifier::new(options.api_url.clone(), private_key, address, environment)
+        .expect("Failed to initialize verifier");
 
     verifier.start_verifier().await;
 }

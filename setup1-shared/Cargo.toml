@@ -14,7 +14,7 @@ proof-of-work = ["phase1", "setup-utils", "snarkvm-curves"]
 phase1 = { path = "../phase1", features = ["parallel"], optional = true }
 setup-utils = { path = "../setup-utils", features = ["parallel"], optional = true }
 
-snarkvm-curves = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c", optional = true }
+snarkvm-curves = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2", optional = true }
 
 egg-mode = { version = "0.16", optional = true }
 serde = { version = "1.0", features = ["derive"] }

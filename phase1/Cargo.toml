@@ -15,13 +15,14 @@ required-features = ["benchmark"]
 
 [dependencies]
 setup-utils = { path = "../setup-utils" }
-snarkvm-algorithms = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c", default-features = false }
-snarkvm-curves = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c" }
-snarkvm-fields = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c" }
-snarkvm-utilities = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c" }
+
+snarkvm-algorithms = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2", default-features = false }
+snarkvm-curves = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2" }
+snarkvm-fields = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2" }
+snarkvm-utilities = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2" }
+
 
 cfg-if = "1.0"
-criterion = { version = "0.3", optional = true }
 derivative = { version = "2", features = [ "use_core" ] }
 itertools = "0.10"
 rand = { version = "0.8" }
@@ -30,11 +31,11 @@ tracing = { version = "0.1.21" }
 serde = { version = "1.0", features = ["derive"] }
 
 [dev-dependencies]
+criterion = { version = "0.3" }
 phase1 = { path = "./", features = ["testing"] }
-snarkvm-marlin = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c" }
-snarkvm-polycommit = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c" }
-snarkvm-ledger = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c" }
-snarkvm-r1cs = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c" }
+snarkvm-marlin = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2" }
+snarkvm-polycommit = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2" }
+snarkvm-r1cs = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2" }
 
 anyhow = { version = "1.0.37" }
 blake2 = { version = "0.9", default-features = false }
@@ -49,7 +50,6 @@ cli = ["parallel", "setup-utils/cli"]
 parallel = ["rayon", "setup-utils/parallel", "snarkvm-algorithms/parallel"]
 wasm = ["setup-utils/wasm"]
 
-benchmark = ["criterion"]
 testing = ["parallel"]
 
 [[test]]

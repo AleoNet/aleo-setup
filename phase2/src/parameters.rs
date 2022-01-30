@@ -158,7 +158,9 @@ impl<E: PairingEngine> MPCParameters<E> {
             phase1_size,
             phase2_size,
         )?;
+        tracing::info!("Read Groth16 parameters");
         let assembly = circuit_to_qap::<E, _>(circuit)?;
+        tracing::info!("Constructed QAP");
         Self::new_chunked(assembly, params, chunk_size)
     }
 
@@ -168,6 +170,7 @@ impl<E: PairingEngine> MPCParameters<E> {
         params: Groth16Params<E>,
         chunk_size: usize,
     ) -> Result<(MPCParameters<E>, ProvingKey<E>, Vec<MPCParameters<E>>)> {
+        tracing::info!("Evaluating over Lagrange coefficients");
         let (a_g1, b_g1, b_g2, gamma_abc_g1, l) = eval::<E>(
             // Lagrange coeffs for Tau, read in from Phase 1
             &params.coeffs_g1,
@@ -181,6 +184,7 @@ impl<E: PairingEngine> MPCParameters<E> {
             // Helper
             cs.num_public_variables,
         );
+        tracing::info!("Finished evaluating over Lagrange coefficients");
 
         // Reject unconstrained elements, so that
         // the L query is always fully dense.
@@ -221,6 +225,7 @@ impl<E: PairingEngine> MPCParameters<E> {
             l_query: vec![],
         };
         let cs_hash = hash_params(&params)?;
+        tracing::info!("Hashed parameters");
         let full_mpc = MPCParameters {
             params: params.clone(),
             cs_hash,
@@ -258,13 +263,98 @@ impl<E: PairingEngine> MPCParameters<E> {
                 contributions: vec![],
             };
             chunks.push(chunk_params);
+            tracing::info!("Constructed chunk {}", i);
         }
+        tracing::info!("Finished constructing parameters");
         Ok((full_mpc, query_parameters, chunks))
     }
 
     /// Get the underlying Groth16 `ProvingKey`
     pub fn get_params(&self) -> &ProvingKey<E> {
         &self.params
+    }
+
+    pub fn read_fast<R: Read>(
+        mut reader: R,
+        compressed: UseCompression,
+        check_correctness: CheckForCorrectness,
+        check_subgroup_membership: bool,
+    ) -> Result<MPCParameters<E>> {
+        let params = Self::read_groth16_fast(&mut reader, compressed, check_correctness, check_subgroup_membership)?;
+
+        let mut cs_hash = [0u8; 64];
+        reader.read_exact(&mut cs_hash)?;
+
+        let contributions = PublicKey::read_batch(&mut reader)?;
+
+        let mpc_params = MPCParameters::<E> {
+            params,
+            cs_hash,
+            contributions,
+        };
+
+        Ok(mpc_params)
+    }
+
+    pub fn read_groth16_fast<R: Read>(
+        mut reader: R,
+        compressed: UseCompression,
+        check_correctness: CheckForCorrectness,
+        check_subgroup_membership: bool,
+    ) -> Result<ProvingKey<E>> {
+        // vk
+        let alpha_g1: E::G1Affine = reader.read_element(compressed, check_correctness)?;
+        let beta_g2: E::G2Affine = reader.read_element(compressed, check_correctness)?;
+        let gamma_g2: E::G2Affine = reader.read_element(compressed, check_correctness)?;
+        let delta_g2: E::G2Affine = reader.read_element(compressed, check_correctness)?;
+        let gamma_abc_g1: Vec<E::G1Affine> = read_vec(&mut reader, compressed, check_correctness)?;
+
+        // rest of the parameters
+        let beta_g1: E::G1Affine = reader.read_element(compressed, check_correctness)?;
+        let delta_g1: E::G1Affine = reader.read_element(compressed, check_correctness)?;
+
+        // a,b queries guaranteed to have infinity points for variables unused in left,right r1cs
+        // inputs respectively
+        let ab_query_correctness = match check_correctness {
+            CheckForCorrectness::Full => CheckForCorrectness::OnlyInGroup,
+            _ => check_correctness,
+        };
+        let a_query: Vec<E::G1Affine> = read_vec(&mut reader, compressed, ab_query_correctness)?;
+        let b_g1_query: Vec<E::G1Affine> = read_vec(&mut reader, compressed, ab_query_correctness)?;
+        let b_g2_query: Vec<E::G2Affine> = read_vec(&mut reader, compressed, ab_query_correctness)?;
+        let h_query: Vec<E::G1Affine> = read_vec(&mut reader, compressed, check_correctness)?;
+        let l_query: Vec<E::G1Affine> = read_vec(&mut reader, compressed, check_correctness)?;
+
+        let params = ProvingKey::<E> {
+            vk: VerifyingKey::<E> {
+                alpha_g1,
+                beta_g2,
+                gamma_g2,
+                delta_g2,
+                gamma_abc_g1,
+            },
+            beta_g1,
+            delta_g1,
+            a_query,
+            b_g1_query,
+            b_g2_query,
+            h_query,
+            l_query,
+        };
+
+        // In the Full mode, this is already checked
+        if check_subgroup_membership && check_correctness != CheckForCorrectness::Full {
+            check_subgroup(&params.a_query)?;
+            check_subgroup(&params.b_g1_query)?;
+            check_subgroup(&params.b_g2_query)?;
+            check_subgroup(&params.h_query)?;
+            check_subgroup(&params.l_query)?;
+            check_subgroup(&params.vk.gamma_abc_g1)?;
+            check_subgroup(&[params.beta_g1, params.delta_g1, params.vk.alpha_g1])?;
+            check_subgroup(&[params.vk.beta_g2, params.vk.delta_g2, params.vk.gamma_g2])?;
+        }
+
+        Ok(params)
     }
 
     /// Contributes some randomness to the parameters. Only one
@@ -573,7 +663,7 @@ pub fn circuit_to_qap<E: PairingEngine, C: ConstraintSynthesizer<E::Fr>>(circuit
     Ok(assembly)
 }
 
-#[cfg(test)]
+#[cfg(all(test, not(feature = "wasm")))]
 mod tests {
     use super::*;
     use crate::{

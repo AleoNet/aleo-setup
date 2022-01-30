@@ -307,6 +307,7 @@ pub fn deserialize<E: PairingEngine>(
     Ok((tau_g1, tau_g2, alpha_g1, beta_g1, beta_g2))
 }
 
+#[cfg(not(feature = "wasm"))]
 #[cfg(test)]
 mod tests {
     use super::*;

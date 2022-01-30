@@ -50,7 +50,7 @@ impl<E: PairingEngine> PublicKey<E> {
             UseCompression::No => parameters.accumulator_size,
         };
         // Write the public key after the provided position
-        self.serialize(&mut output_map[position..].as_mut())?;
+        CanonicalSerialize::serialize(self, &mut &mut output_map[position..])?;
 
         Ok(())
     }

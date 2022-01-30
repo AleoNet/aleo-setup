@@ -23,7 +23,7 @@ use phase1_coordinator::{
 use setup1_shared::structures::{ContributorStatus, LockResponse, PublicSettings, TwitterInfo};
 use setup_utils::calculate_hash;
 use snarkvm_curves::{bls12_377::Bls12_377, bw6_761::BW6_761, PairingEngine};
-use snarkvm_dpc::{parameters::testnet2::Testnet2Parameters, Address, PrivateKey, ViewKey};
+use snarkvm_dpc::{testnet2::Testnet2, Address, PrivateKey, ViewKey};
 
 use age::DecryptError;
 use anyhow::{Context, Result};
@@ -65,8 +65,8 @@ pub struct Contribute {
     pub server_url: Url,
     /// Public key id for this contributor: e.g.
     /// `aleo1h7pwa3dh2egahqj7yvq7f7e533lr0ueysaxde2ktmtu2pxdjvqfqsj607a`
-    pub participant_id: Address<Testnet2Parameters>,
-    pub private_key: PrivateKey<Testnet2Parameters>,
+    pub participant_id: Address<Testnet2>,
+    pub private_key: PrivateKey<Testnet2>,
     seed: Arc<SecretVec<u8>>,
     pub environment: Environment,
 }
@@ -75,7 +75,7 @@ impl Contribute {
     pub fn new(
         opts: &ContributeOptions,
         environment: &Environment,
-        private_key: PrivateKey<Testnet2Parameters>,
+        private_key: PrivateKey<Testnet2>,
         seed: SecretVec<u8>,
     ) -> Self {
         // TODO (raychu86): Pass in pipelining options from the CLI.
@@ -618,10 +618,7 @@ fn initialize_progress_bar() -> ProgressBar {
     progress_bar
 }
 
-async fn get_contributor_status(
-    server_url: &Url,
-    private_key: &PrivateKey<Testnet2Parameters>,
-) -> Result<ContributorStatus> {
+async fn get_contributor_status(server_url: &Url, private_key: &PrivateKey<Testnet2>) -> Result<ContributorStatus> {
     let endpoint = "/v1/contributor/status";
     let ceremony_url = server_url.join(endpoint)?;
 
@@ -672,7 +669,7 @@ fn get_non_contributed_chunks<'r>(ceremony: &'r Round, participant_id: &str) -> 
 
 struct HeartbeatData {
     server_url: Url,
-    private_key: PrivateKey<Testnet2Parameters>,
+    private_key: PrivateKey<Testnet2>,
 }
 
 impl HeartbeatData {
@@ -695,7 +692,7 @@ impl HeartbeatData {
     }
 }
 
-fn initiate_heartbeat(server_url: Url, private_key: PrivateKey<Testnet2Parameters>) {
+fn initiate_heartbeat(server_url: Url, private_key: PrivateKey<Testnet2>) {
     let private_key = private_key.to_string();
     std::thread::spawn(move || {
         let heartbeat_data = HeartbeatData {
@@ -742,7 +739,7 @@ fn decrypt(passphrase: &SecretString, encrypted: &str) -> Result<Vec<u8>> {
 fn read_keys<P: Into<PathBuf>>(
     keys_path: P,
     passphrase: &SecretString,
-) -> Result<(SecretVec<u8>, PrivateKey<Testnet2Parameters>)> {
+) -> Result<(SecretVec<u8>, PrivateKey<Testnet2>)> {
     let mut contents = String::new();
     File::open(keys_path)?.read_to_string(&mut contents)?;
     let keys: AleoSetupKeys = serde_json::from_str(&contents)?;

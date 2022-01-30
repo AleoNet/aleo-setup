@@ -69,8 +69,8 @@ fn prepare_phase2<E: Engine + Sync>(opts: &PreparePhase2Opts) -> Result<()> {
     // Deserialize the accumulator
     let current_accumulator = Phase1::deserialize(
         &response_readable_map,
-        UseCompression::Yes,
-        CheckForCorrectness::Full,
+        UseCompression::No,
+        CheckForCorrectness::No,
         &parameters,
     )
     .expect("unable to read uncompressed accumulator");

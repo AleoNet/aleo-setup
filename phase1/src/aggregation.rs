@@ -16,7 +16,7 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
         let span = info_span!("phase1-aggregation");
         let _enter = span.enter();
 
-        info!("starting...");
+        info!("Starting Aggregation");
 
         for (chunk_index, (input, compressed_input)) in inputs.iter().enumerate() {
             let chunk_parameters =
@@ -33,9 +33,10 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
             let start = chunk_index * chunk_parameters.chunk_size;
             let end = (chunk_index + 1) * chunk_parameters.chunk_size;
 
-            debug!("combining chunk from {} to {}", start, end);
+            debug!("Combining chunk from {} to {}", start, end);
+            debug!("Chunk parameters: {:?}", chunk_parameters);
 
-            let span = info_span!("batch", start, end);
+            let span = info_span!("Batch", start, end);
             let _enter = span.enter();
 
             match parameters.proving_system {
@@ -53,16 +54,25 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                                 .write_batch(&elements, compressed_output)
                                 .expect("should have written batch");
 
-                            trace!("tau_g1 aggregation for chunk {} successful", chunk_index);
+                            debug!(
+                                "Tau G1 aggregation for chunk {} successful; {} G1 elements written",
+                                chunk_index,
+                                elements.len()
+                            );
                         });
 
+                        debug!(
+                            "`start = {}, chunk_parameters.powers_length = {}, start < chunk_parameters.powers_length = {}`",
+                            start,
+                            chunk_parameters.powers_length,
+                            start < chunk_parameters.powers_length
+                        );
                         if start < chunk_parameters.powers_length {
                             rayon::scope(|t| {
                                 let _enter = span.enter();
 
                                 t.spawn(|_| {
                                     let _enter = span.enter();
-
                                     let elements: Vec<E::G2Affine> = in_tau_g2
                                         .read_batch(compressed_input, CheckForCorrectness::No)
                                         .expect("should have read batch");
@@ -70,7 +80,11 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                                         .write_batch(&elements, compressed_output)
                                         .expect("should have written batch");
 
-                                    trace!("tau_g2 aggregation for chunk {} successful", chunk_index);
+                                    debug!(
+                                        "Tau G2 aggregation for chunk {} successful; {} G2 elements written",
+                                        chunk_index,
+                                        elements.len()
+                                    );
                                 });
 
                                 t.spawn(|_| {
@@ -83,7 +97,11 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                                         .write_batch(&elements, compressed_output)
                                         .expect("should have written batch");
 
-                                    trace!("alpha_g1 aggregation for chunk {} successful", chunk_index);
+                                    debug!(
+                                        "alpha_g1 aggregation for chunk {} successful; {} G1 elements written",
+                                        chunk_index,
+                                        elements.len()
+                                    );
                                 });
 
                                 t.spawn(|_| {
@@ -96,7 +114,11 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                                         .write_batch(&elements, compressed_output)
                                         .expect("should have written batch");
 
-                                    trace!("beta_g1 aggregation for chunk {} successful", chunk_index);
+                                    debug!(
+                                        "beta_g1 aggregation for chunk {} successful; {} G1 elements written",
+                                        chunk_index,
+                                        elements.len()
+                                    );
                                 });
                             });
                         }
@@ -108,7 +130,7 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                             beta_g2
                                 .write_element(&element, compressed_output)
                                 .expect("should have written element");
-                            trace!("beta_g2 aggregation for chunk {} successful", chunk_index);
+                            debug!("beta_g2 aggregation for chunk {} successful", chunk_index);
                         }
                     });
                 }

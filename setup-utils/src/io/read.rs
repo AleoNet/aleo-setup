@@ -5,6 +5,7 @@ use snarkvm_curves::AffineCurve;
 
 #[cfg(feature = "parallel")]
 use rayon::prelude::*;
+use snarkvm_utilities::CanonicalDeserialize;
 use std::io::Read;
 
 /// Used for reading 1 group element from a serialized buffer
@@ -60,9 +61,9 @@ impl<R: Read> Deserializer for R {
         compression: UseCompression,
         check_for_correctness: CheckForCorrectness,
     ) -> Result<G> {
-        let point = match compression {
-            UseCompression::Yes => G::deserialize(self)?,
-            UseCompression::No => G::deserialize_uncompressed(self)?,
+        let point: G = match compression {
+            UseCompression::Yes => CanonicalDeserialize::deserialize(self)?,
+            UseCompression::No => CanonicalDeserialize::deserialize_uncompressed(self)?,
         };
 
         if (check_for_correctness == CheckForCorrectness::Full

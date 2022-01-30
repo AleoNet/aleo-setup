@@ -1,13 +1,13 @@
 use blake2::{Blake2s, Digest};
 use rand::{CryptoRng, Rng};
-use snarkvm_dpc::{parameters::testnet2::Testnet2Parameters, Address, PrivateKey};
+use snarkvm_dpc::{testnet2::Testnet2, Address, PrivateKey};
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
 pub fn generate_keys() -> Result<JsValue, JsValue> {
     let mut rng = rand::thread_rng();
     let private_key = PrivateKey::new(&mut rng);
-    let address = Address::from_private_key(&private_key).expect("Should have derived an Aleo address");
+    let address = Address::from_private_key(&private_key);
     let (confirmation_key, new_private_key) = generate_confirmation_key(&address, &mut rng);
 
     Ok(JsValue::from_serde(&(
@@ -20,9 +20,9 @@ pub fn generate_keys() -> Result<JsValue, JsValue> {
 }
 
 fn generate_confirmation_key<R: Rng + CryptoRng>(
-    address: &Address<Testnet2Parameters>,
+    address: &Address<Testnet2>,
     rng: &mut R,
-) -> (String, PrivateKey<Testnet2Parameters>) {
+) -> (String, PrivateKey<Testnet2>) {
     let new_private_key = PrivateKey::new(rng);
     let concatenated = format!("{}{}", address.to_string(), new_private_key.to_string());
     let mut hasher = Blake2s::new();

@@ -16,7 +16,7 @@ required-features = ["parallel"]
 [dependencies]
 phase1 = { path = "../phase1" }
 setup-utils = { path = "../setup-utils" }
-snarkvm-curves = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c" }
+snarkvm-curves = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2" }
 
 anyhow = { version = "1.0.37" }
 fs-err = { version = "2.6.0" }

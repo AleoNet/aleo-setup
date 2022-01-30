@@ -6,7 +6,13 @@ use crate::{
 use snarkvm_algorithms::{cfg_into_iter, cfg_iter, cfg_iter_mut};
 use snarkvm_curves::{AffineCurve, Group, PairingEngine, ProjectiveCurve};
 use snarkvm_fields::{Field, One, PrimeField, Zero};
-use snarkvm_utilities::{biginteger::BigInteger, rand::UniformRand, CanonicalSerialize, ConstantSerializedSize};
+use snarkvm_utilities::{
+    biginteger::BigInteger,
+    rand::UniformRand,
+    BitIteratorBE,
+    CanonicalSerialize,
+    ConstantSerializedSize,
+};
 
 use blake2::{Blake2b, Digest};
 use rand::{rngs::OsRng, thread_rng, CryptoRng, Rng, SeedableRng};
@@ -14,7 +20,7 @@ use rand_chacha::ChaChaRng;
 use std::{
     convert::TryInto,
     io::{self, Write},
-    ops::{AddAssign, Mul},
+    ops::AddAssign,
     sync::Arc,
 };
 
@@ -48,8 +54,9 @@ pub fn print_hash(hash: &[u8]) {
 
 /// Multiply a large number of points by a scalar
 pub fn batch_mul<C: AffineCurve>(bases: &mut [C], coeff: &C::ScalarField) -> Result<()> {
+    let coeff = coeff.to_repr();
     let mut points: Vec<_> = cfg_iter!(bases)
-        .map(|base| base.into_projective().mul(*coeff))
+        .map(|base| base.mul_bits(BitIteratorBE::new(coeff)))
         .collect();
     C::Projective::batch_normalization(points.as_mut_slice());
     cfg_iter_mut!(bases)
@@ -79,11 +86,13 @@ pub fn batch_exp<C: AffineCurve>(
         .map(|(base, exp)| {
             // If a coefficient was provided, multiply the exponent
             // by that coefficient
-            let exp = if let Some(coeff) = coeff { exp.mul(coeff) } else { *exp };
-
+            let mut exp = *exp;
+            if let Some(coeff) = coeff {
+                exp *= coeff;
+            }
             // Raise the base to the exponent (additive notation so it is executed
             // via a multiplication)
-            base.mul(exp).into_projective()
+            base.mul_bits(BitIteratorBE::new(exp.to_repr()))
         })
         .collect();
     // we do not use batch_normalization_into_affine because it allocates
@@ -252,6 +261,7 @@ pub fn from_slice(bytes: &[u8]) -> [u8; 32] {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use core::ops::Mul;
     use snarkvm_curves::bls12_377::{Bls12_377, Fr, G1Affine, G2Affine};
 
     #[test]
@@ -417,6 +427,8 @@ fn dense_multiexp_inner<G: AffineCurve>(
     c: u32,
     handle_trivial: bool,
 ) -> <G as AffineCurve>::Projective {
+    let zero = G::ScalarField::zero().to_repr();
+    let one = G::ScalarField::one().to_repr();
     use std::sync::Mutex;
     // Perform this region of the multiexp. We use a different strategy - go over region in parallel,
     // then over another region, etc. No Arc required
@@ -433,8 +445,6 @@ fn dense_multiexp_inner<G: AffineCurve>(
                     let mut buckets = vec![<G as AffineCurve>::Projective::zero(); (1 << c) - 1];
                     // Accumulate the result
                     let mut acc = G::Projective::zero();
-                    let zero = G::ScalarField::zero().to_repr();
-                    let one = G::ScalarField::one().to_repr();
 
                     for (base, &exp) in base.iter().zip(exp.iter()) {
                         // let index = (exp.as_ref()[0] & mask) as usize;
@@ -464,13 +474,13 @@ fn dense_multiexp_inner<G: AffineCurve>(
                     // buckets are filled with the corresponding accumulated value, now sum
                     let mut running_sum = G::Projective::zero();
                     for exp in buckets.into_iter().rev() {
-                        running_sum.add_assign(&exp);
-                        acc.add_assign(&running_sum);
+                        running_sum += &exp;
+                        acc += &running_sum;
                     }
 
                     let mut guard = this_region_rwlock.lock().expect("poisoned");
 
-                    (*guard).add_assign(&acc);
+                    *guard += &acc;
                 });
             }
         })

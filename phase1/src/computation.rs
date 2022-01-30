@@ -20,7 +20,7 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
         parameters: &'a Phase1Parameters<E>,
     ) -> Result<()> {
         let span = info_span!("phase1-computation");
-        let _ = span.enter();
+        let _enter = span.enter();
 
         info!("starting...");
 
@@ -31,6 +31,7 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
         // Get mutable references of the outputs.
         let (tau_g1_outputs, tau_g2_outputs, alpha_g1_outputs, beta_g1_outputs, beta_g2_outputs) =
             split_mut(output, parameters, compressed_output);
+        info!("Parameters for contribution: {:?}", parameters);
 
         match parameters.proving_system {
             ProvingSystem::Groth16 => {
@@ -50,7 +51,7 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                     debug!("contributing to chunk from {} to {}", start, end);
 
                     let span = info_span!("batch", start, end);
-                    let _ = span.enter();
+                    let _enter = span.enter();
 
                     // Determine the chunk start and end indices based on the contribution mode.
                     let (start_chunk, end_chunk) = match parameters.contribution_mode {
@@ -62,10 +63,10 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                     };
 
                     rayon_cfg::scope(|t| {
-                        let _ = span.enter();
+                        let _enter = span.enter();
 
                         t.spawn(|_| {
-                            let _ = span.enter();
+                            let _enter = span.enter();
 
                             // Generate powers from `start` to `end` (e.g. [0,4) then [4, 8) etc.)
                             let powers = generate_powers_of_tau::<E>(&key.tau, start, end);
@@ -76,10 +77,11 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                             // and write the updated value (without allocating) to the
                             // output buffer
                             rayon_cfg::scope(|t| {
-                                let _ = span.enter();
+                                let _enter = span.enter();
+                                info!("Starting powers of Tau in G1");
 
                                 t.spawn(|_| {
-                                    let _ = span.enter();
+                                    let _enter = span.enter();
 
                                     // Check that the chunk is of nonzero length.
                                     assert!(tau_g1_inputs.len() > 0);
@@ -93,7 +95,7 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                                     )
                                     .expect("could not apply powers of tau to tau_g1 elements");
 
-                                    trace!("applied powers to tau_g1 elements");
+                                    info!("Applied powers to tau_g1 elements");
                                 });
                                 if start < parameters.powers_length {
                                     // if the `end` would be out of bounds, then just process until
@@ -118,10 +120,11 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                                     };
 
                                     rayon_cfg::scope(|t| {
-                                        let _ = span.enter();
+                                        let _enter = span.enter();
 
                                         t.spawn(|_| {
-                                            let _ = span.enter();
+                                            let _enter = span.enter();
+                                            info!("Starting powers of Tau in G2");
 
                                             // Check that the chunk is of nonzero length.
                                             assert!(tau_g2_inputs.len() > 0);
@@ -135,11 +138,12 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                                             )
                                             .expect("could not apply powers of tau to tau_g2 elements");
 
-                                            trace!("applied powers to tau_g2 elements");
+                                            trace!("Applied powers of Tau in G2");
                                         });
 
                                         t.spawn(|_| {
-                                            let _ = span.enter();
+                                            let _enter = span.enter();
+                                            info!("Starting Alpha G1 elements");
 
                                             // Check that the chunk is of nonzero length.
                                             assert!(alpha_g1_inputs.len() > 0);
@@ -153,11 +157,12 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                                             )
                                             .expect("could not apply powers of tau to alpha_g1 elements");
 
-                                            trace!("applied powers to alpha_g1 elements");
+                                            info!("Applied powers to Alpha G1 elements");
                                         });
 
                                         t.spawn(|_| {
-                                            let _ = span.enter();
+                                            info!("Starting beta G1 elements");
+                                            let _enter = span.enter();
 
                                             // Check that the chunk is of nonzero length.
                                             assert!(beta_g1_inputs.len() > 0);
@@ -171,7 +176,7 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                                             )
                                             .expect("could not apply powers of tau to beta_g1 elements");
 
-                                            trace!("applied powers to beta_g1 elements");
+                                            trace!("Applied powers to Beta G1 elements");
                                         });
                                     });
                                 }
@@ -249,7 +254,7 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                     debug!("contributing to chunk from {} to {}", start, end);
 
                     let span = info_span!("batch", start, end);
-                    let _ = span.enter();
+                    let _enter = span.enter();
 
                     // Determine the chunk start and end indices based on the contribution mode.
                     let (start_chunk, end_chunk) = match parameters.contribution_mode {
@@ -261,10 +266,10 @@ impl<'a, E: PairingEngine + Sync> Phase1<'a, E> {
                     };
 
                     rayon_cfg::scope(|t| {
-                        let _ = span.enter();
+                        let _enter = span.enter();
 
                         t.spawn(|_| {
-                            let _ = span.enter();
+                            let _enter = span.enter();
 
                             // Generate powers from `start` to `end` (e.g. [0,4) then [4, 8) etc.)
                             let powers = generate_powers_of_tau::<E>(&key.tau, start, end);

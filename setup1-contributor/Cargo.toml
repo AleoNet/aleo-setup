@@ -14,9 +14,10 @@ phase1-coordinator = { path = "../phase1-coordinator", features = ["operator", "
 setup1-shared = { path = "../setup1-shared", features = ["twitter", "proof-of-work"] }
 setup-utils = { path = "../setup-utils", features = ["parallel"] }
 
-snarkvm-dpc = { git = "https://github.com/AleoHQ/snarkVM", rev = "fc997c" }
-snarkvm-curves = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c" }
-snarkvm-utilities = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c" }
+
+snarkvm-dpc = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2" }
+snarkvm-curves  = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2" }
+snarkvm-utilities = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2" }
 
 age = { version = "0.7", features = [ "cli-common", "armor", "plugin" ] }
 anyhow = { version = "1.0.33" }

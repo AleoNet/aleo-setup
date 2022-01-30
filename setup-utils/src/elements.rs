@@ -1,8 +1,14 @@
-use serde::{Deserialize, Serialize};
+#[cfg(feature = "parallel")]
+use rayon::prelude::*;
+use snarkvm_curves::AffineCurve;
+use snarkvm_fields::{FieldParameters, PrimeField, Zero};
+use snarkvm_utilities::{BitIteratorBE, CanonicalDeserialize, Read};
 use std::fmt;
 
+use crate::BatchDeserializer;
+
 /// Determines if point compression should be used.
-#[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Copy, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum UseCompression {
     Yes,
     No,
@@ -18,7 +24,7 @@ impl fmt::Display for UseCompression {
 }
 
 /// Determines if points should be checked to be infinity.
-#[derive(Debug, Copy, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Copy, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub enum CheckForCorrectness {
     Full,
     OnlyNonZero,
@@ -57,5 +63,28 @@ impl fmt::Display for ElementType {
             ElementType::BetaG1 => write!(f, "BetaG1"),
             ElementType::BetaG2 => write!(f, "BetaG2"),
         }
+    }
+}
+
+pub fn read_vec<G: AffineCurve, R: Read>(
+    mut reader: R,
+    compressed: UseCompression,
+    check_for_correctness: CheckForCorrectness,
+) -> Result<Vec<G>, crate::Error> {
+    let size = match compressed {
+        UseCompression::Yes => G::SERIALIZED_SIZE,
+        UseCompression::No => G::UNCOMPRESSED_SIZE,
+    };
+    let length = u64::deserialize(&mut reader)? as usize;
+    let mut bytes = vec![0u8; length * size];
+    reader.read_exact(&mut bytes)?;
+    bytes.read_batch(compressed, check_for_correctness)
+}
+
+pub fn check_subgroup<C: AffineCurve>(elements: &[C]) -> core::result::Result<(), crate::Error> {
+    let modulus = <C::ScalarField as PrimeField>::Parameters::MODULUS;
+    match snarkvm_algorithms::cfg_iter!(elements).all(|p| p.mul_bits(BitIteratorBE::new(modulus)).is_zero()) {
+        true => Ok(()),
+        false => Err(crate::Error::IncorrectSubgroup),
     }
 }

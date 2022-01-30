@@ -68,16 +68,17 @@ pub(crate) fn apply_powers<C: AffineCurve>(
     powers: &[C::ScalarField],
     coeff: Option<&C::ScalarField>,
 ) -> Result<()> {
+    tracing::debug!("Applying powers {} to {}", start, end);
     let in_size = buffer_size::<C>(input_compressed);
     let out_size = buffer_size::<C>(output_compressed);
 
     // Read the input
-    let mut elements =
+    let elements =
         &mut input[start * in_size..end * in_size].read_batch::<C>(input_compressed, check_input_for_correctness)?;
     // calculate the powers
-    batch_exp(&mut elements, &powers[..end - start], coeff)?;
+    batch_exp(elements, &powers[..(end - start)], coeff)?;
     // write back
-    output[start * out_size..end * out_size].write_batch(&elements, output_compressed)?;
+    output[(start * out_size)..(end * out_size)].write_batch(elements, output_compressed)?;
 
     Ok(())
 }

@@ -11,7 +11,8 @@ edition = "2018"
 [dependencies]
 phase1 = { path = "../phase1" }
 setup-utils = { path = "../setup-utils" }
-snarkvm-curves = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "fc997c" }
+
+snarkvm-curves = { git = "https://github.com/AleoHQ/snarkVM.git", rev = "092dfd2" }
 
 fs-err = "2.6"
 gumdrop = { version = "0.8.0" }

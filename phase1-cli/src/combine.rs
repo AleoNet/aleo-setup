@@ -73,7 +73,7 @@ pub fn combine<T: Engine + Sync>(
         .open(combined_filename)
         .expect("unable to create new combined file in this directory");
 
-    println!("parameters for output: {:?}", parameters_for_output);
+    tracing::debug!("Parameters for output: {:?}", parameters_for_output);
 
     writer
         .set_len(parameters_for_output.accumulator_size as u64)
@@ -94,6 +94,7 @@ pub fn combine<T: Engine + Sync>(
         parameters.total_size_in_log2,
         parameters.batch_size,
     );
+    tracing::debug!("Parameters for aggregation: {:?}", parameters);
     let res = Phase1::aggregation(
         &readers
             .iter()

@@ -15,7 +15,7 @@ cfg_if! {
         use wasm_bindgen::prelude::*;
         use itertools::Itertools;
         use parameters::MPCParameters;
-        use zexe_algebra::{Bls12_377, BW6_761, PairingEngine};
+        use snarkvm_curves::{bls12_377::Bls12_377, bw6_761::BW6_761, PairingEngine};
         use setup_utils::{ get_rng, user_system_randomness };
 
         macro_rules! log {
