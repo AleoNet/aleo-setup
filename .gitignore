@@ -17,3 +17,5 @@ tmp_*
 # Contribution artifacts
 *.params
 *keypair
+
+status.json

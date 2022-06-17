@@ -8,6 +8,13 @@ RUN docker/compile.sh
 
 FROM debian:buster-slim AS runtime
 WORKDIR /app
+
 COPY --from=builder /app/target/x86_64-unknown-linux-musl/release/phase1-coordinator /usr/local/bin
-EXPOSE 1337
+COPY --from=builder /app/Rocket.toml /rocket/Rocket.toml
+COPY --from=builder /app/status.json /rocket/status.json
+
+ENV ROCKET_CONFIG=/rocket/Rocket.toml
+ENV RUST_LOG=info
+
+EXPOSE 8000
 ENTRYPOINT ["/usr/local/bin/phase1-coordinator"]

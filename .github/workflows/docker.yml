@@ -2,7 +2,7 @@ name: Build phase1-coordinator docker image
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, production ]
 
 jobs:
   docker:
