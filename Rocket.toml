@@ -1,6 +1,6 @@
 [default]
 address = "0.0.0.0"
-port = 8000
+port = 8080
 keep_alive = 5
 ident = "Rocket"
 log_level = "normal"
