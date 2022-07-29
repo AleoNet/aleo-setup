@@ -27,7 +27,7 @@ jobs:
         nightly_version: [nightly-2022-05-27]
         make: 
           - name: Build Trusted Setup CLI
-            command: cargo build --release --bin phase1 --features=cli
+            command: RUSTFLAGS='-Clinker=rust-lld' cargo build --release --bin phase1-coordinator --target x86_64-unknown-linux-musl --features="parallel"
             cache_key: trusted-setup
             cache_version: v1
 

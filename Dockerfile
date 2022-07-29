@@ -5,7 +5,7 @@ WORKDIR /app
 FROM base as builder
 RUN rustup target add x86_64-unknown-linux-musl
 COPY . .
-RUN RUSTFLAGS='-Clinker=rust-lld' cargo build --release --bin phase1-coordinator --target x86_64-unknown-linux-musl
+RUN RUSTFLAGS='-Clinker=rust-lld' cargo build --release --bin phase1-coordinator --target x86_64-unknown-linux-musl --features="parallel"
 
 FROM debian:buster-slim AS runtime
 WORKDIR /app
