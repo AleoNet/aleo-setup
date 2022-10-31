@@ -18,8 +18,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        make: 
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        make:
           - name: Build Trusted Setup CLI
             command: cargo build --release --bin namada-ts --features=cli
             cache_key: trusted-setup
@@ -51,7 +51,7 @@ jobs:
           curl -L "$LINK/$SCCACHE_VERSION/$SCCACHE_FILE.tar.gz" | tar xz
           mv -f $SCCACHE_FILE/sccache $HOME/.local/bin/sccache
           chmod +x $HOME/.local/bin/sccache
-          echo "$HOME/.local/bin" >> $GITHUB_PATH          
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
       - name: Install sccache (macos-latest)
         if: matrix.os == 'macos-latest'
         run: |
@@ -68,7 +68,7 @@ jobs:
         with:
           path: |
             ~/.cargo/registry
-            ~/.cargo/git          
+            ~/.cargo/git
           key: ${{ runner.os }}-anoma-${{ matrix.anoma_cache_version }}-release-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: ${{ runner.os }}-anoma-${{ matrix.anoma_cache_version }}-release-
       - name: Start sccache server
@@ -104,6 +104,7 @@ jobs:
         run: |
           mv release-macos-latest-${{ github.sha }}/namada-ts namada-ts-macos-${{ steps.get_version.outputs.version }}
           mv release-ubuntu-latest-${{ github.sha }}/namada-ts namada-ts-linux-${{ steps.get_version.outputs.version }}
+          mv release-windows-latest-${{ github.sha }}/namada-ts namada-ts-windows-${{ steps.get_version.outputs.version }}
       - name: Create release
         uses: softprops/action-gh-release@v1
         with:
