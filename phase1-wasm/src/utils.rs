@@ -9,7 +9,7 @@ use wasm_bindgen::prelude::*;
 /// Map an error that implements [std::fmt::Display] to a [JsValue].
 pub(crate) fn map_js_err(e: impl std::fmt::Display) -> JsValue {
     // Use alternate selector # to activate anyhow::Error inclusion of causes.
-    // See https://docs.rs/anyhow/1.0.26/anyhow/struct.Error.html#display-representations
+    // See https://docs.rs/anyhow/1.0.81/anyhow/struct.Error.html#display-representations
     JsValue::from_str(&format!("{:#}", e))
 }
 
