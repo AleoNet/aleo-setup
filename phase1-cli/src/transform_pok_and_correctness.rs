@@ -23,7 +23,7 @@ pub fn transform_pok_and_correctness<T: Engine + Sync>(
         parameters.total_size_in_log2
     );
 
-    // Try to load challenge file from disk.
+    // Try to load the challenge file from disk.
     let challenge_reader = OpenOptions::new()
         .read(true)
         .open(challenge_filename)

@@ -19,7 +19,7 @@ For instructions on how to ensure that the ceremony is executed properly, refer 
 
 1. A coordinator generates an accumulator
 1. Participant downloads the latest accumulator
-1. Participant contributes their randomness to the accumulator (randomness is permantently deleted after this step)
+1. Participant contributes their randomness to the accumulator (randomness is permanently deleted after this step)
 1. Participant uploads the accumulator back to the coordinator
 1. Coordinator verifies the accumulator was transformed correctly and produces a new challenge
 

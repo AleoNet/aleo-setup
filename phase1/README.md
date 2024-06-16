@@ -2,7 +2,7 @@
 
 Distributed generation of powers of tau for Phase 1 of [BGM17](https://eprint.iacr.org/2017/1050). 
 
-Also contains a binary which converts the Powers of Tau to Lagrange coefficients and allows Phase 2 to produce efficient A, B and L queries for the Groth16 SNARK.
+Also contains a binary that converts the Powers of Tau to Lagrange coefficients and allows Phase 2 to produce efficient A, B and L queries for the Groth16 SNARK.
 
 - Utilizes [Zexe's algebra crate](https://github.com/scipr-lab/zexe), meaning we support all available curves:
     - BLS12-377

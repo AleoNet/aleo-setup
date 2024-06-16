@@ -12,7 +12,7 @@ pub fn transform_ratios<T: Engine + Sync>(response_filename: &str, parameters: &
         parameters.total_size_in_log2
     );
 
-    // Try to load response file from disk.
+    // Try to load the response file from disk.
     let response_reader = OpenOptions::new()
         .read(true)
         .open(response_filename)
