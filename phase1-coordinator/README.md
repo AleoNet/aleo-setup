@@ -28,7 +28,7 @@ the coordinator commits to the next round and the ceremony advances by one round
 the commit is rolled back to the current round and all participants assigned to the next round are returned to the queue.
 
 See the documentation in [lib.rs](./src/lib.rs) as an entry point to a more
-detailed explaination of how this library works.
+detailed explanation of how this library works.
 
 ## Build Guide
 
