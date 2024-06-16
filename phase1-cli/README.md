@@ -30,8 +30,8 @@ Optional arguments:
 Available commands:
 
   new                   creates a new challenge for the ceremony
-  contribute            contribute to ceremony by producing a response to a challenge (or create a new challenge if this is the first contribution)
-  beacon                contribute randomness via a random beacon (e.g. a bitcoin block header hash)
+  contribute            contribute to the ceremony by producing a response to a challenge (or create a new challenge if this is the first contribution)
+  beacon                contributes randomness via a random beacon (e.g. a bitcoin block header hash)
   verify-and-transform  verify the contributions so far and generate a new challenge
 ```
 
