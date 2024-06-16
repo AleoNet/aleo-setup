@@ -16,5 +16,5 @@ Must be used with compatible versions of **serde** and **serde_json**.
 
 ## Error types
 
-Right now the errors in encode/decode functions are the same as returned
+Right now the errors in encode/decode functions are the same as those returned
 by **serde_json**
