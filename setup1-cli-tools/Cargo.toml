@@ -9,11 +9,20 @@ name = "public-key-extractor"
 path = "src/public_key_extractor.rs"
 
 [[bin]]
+name = "decrypt_text"
+path = "src/decrypt_text.rs"
+
+[[bin]]
+name = "encrypt_text"
+path = "src/encrypt_text.rs"
+
+[[bin]]
 name = "view-key"
 path = "src/view_key.rs"
 
 [dependencies]
 snarkvm-dpc = { git = "https://github.com/AleoHQ/snarkVM", rev = "fc997c" }
+snarkvm-algorithms = { git = "https://github.com/AleoHQ/snarkVM", rev = "fc997c" }
 
 anyhow = "1.0.38"
 age = { version = "0.7", features = ["cli-common", "armor", "plugin"] }
